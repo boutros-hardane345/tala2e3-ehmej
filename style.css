@@ -1293,6 +1293,7 @@ footer p {
         text-align: center;
     }
     
+    /* Updated Members Grid for better photo display */
     .members-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
@@ -1300,10 +1301,38 @@ footer p {
     
     .members-grid.compact {
         grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
     }
     
     .member-image {
         height: 150px;
+    }
+    
+    /* Make leader card full width on mobile */
+    .leader-card {
+        grid-column: 1 / -1;
+        max-width: 100%;
+    }
+    
+    .leader-card .member-image {
+        height: 200px;
+    }
+    
+    .member-info {
+        padding: 1rem;
+    }
+    
+    .member-info h4 {
+        font-size: 1rem;
+    }
+    
+    .member-desc {
+        font-size: 0.85rem;
+    }
+    
+    .member-mini {
+        padding: 0.6rem;
+        font-size: 0.9rem;
     }
     
     .timeline::before {
@@ -1335,16 +1364,54 @@ footer p {
     }
     
     .library-card img {
-        height: 250px;
+        height: 200px;
+    }
+    
+    .library-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .card-content {
+        padding: 1rem;
+    }
+    
+    .card-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .social-showcase {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
     
     .social-showcase-card {
-        padding: 1.5rem;
+        padding: 1.2rem;
     }
     
     .social-showcase-img {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .btn-social {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .contact-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .contact-info-item {
+        padding: 1rem;
+    }
+    
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
     }
 }
 
@@ -1361,12 +1428,41 @@ footer p {
         grid-template-columns: 1fr;
     }
     
+    /* Updated for very small screens */
     .members-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
     }
     
     .members-grid.compact {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+    
+    .member-image {
+        height: 130px;
+    }
+    
+    .leader-card .member-image {
+        height: 180px;
+    }
+    
+    .member-info {
+        padding: 0.8rem;
+    }
+    
+    .member-info h4 {
+        font-size: 0.9rem;
+    }
+    
+    .member-desc {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .member-mini {
+        padding: 0.5rem;
+        font-size: 0.85rem;
     }
     
     .important-links {
