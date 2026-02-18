@@ -865,6 +865,7 @@ nav h1 {
     font-weight: 600;
     transition: var(--transition);
     border: 2px solid var(--primary);
+    cursor: pointer;
 }
 
 .btn-view:hover {
@@ -1171,6 +1172,103 @@ footer p {
     animation: fadeIn 0.8s ease-out;
 }
 
+/* Lightbox Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 3px solid var(--accent);
+    box-shadow: var(--shadow-lg);
+    animation: zoom 0.3s ease-out;
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: var(--transition);
+    cursor: pointer;
+    z-index: 10001;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 0, 0, 0.8);
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+}
+
+.close-modal:hover {
+    color: var(--accent);
+    transform: rotate(90deg);
+    background: var(--primary-dark);
+}
+
+.modal-caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: white;
+    padding: 20px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Make all images clickable */
+.card img,
+.member-image img,
+.library-card img,
+.featured-card img,
+.gallery img,
+.about-image img {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.card img:hover,
+.member-image img:hover,
+.library-card img:hover,
+.featured-card img:hover,
+.gallery img:hover,
+.about-image img:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     nav h1 { font-size: 1.25rem; }
@@ -1413,6 +1511,20 @@ footer p {
         height: 40px;
         font-size: 1.5rem;
     }
+    
+    /* Modal responsive */
+    .modal-content {
+        max-width: 95%;
+        max-height: 70vh;
+    }
+    
+    .close-modal {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1511,7 +1623,7 @@ footer p {
 
 /* Print Styles */
 @media print {
-    nav, footer, #season-container, .hero-buttons, .btn, .action-card, .social-link {
+    nav, footer, #season-container, .hero-buttons, .btn, .action-card, .social-link, .modal {
         display: none;
     }
     
