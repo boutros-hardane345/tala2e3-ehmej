@@ -2,21 +2,220 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تواصل معنا - طلائع إهمج</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>مكتبتي - طلائع إهمج</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Liturgical badge positioning - moved to right side */
+        .liturgical-badge {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            left: auto;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--gold-bright, #E8C85A);
+            font-weight: 600;
+            z-index: 1001;
+            border: 1px solid rgba(201,168,76,0.4);
+            font-family: 'Amiri', serif;
+            pointer-events: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .liturgical-badge {
+                top: 115px;
+                right: 10px;
+                left: auto;
+                font-size: 0.65rem;
+                padding: 0.25rem 0.9rem;
+                background: rgba(0,0,0,0.75);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .liturgical-badge {
+                top: 105px;
+                right: 8px;
+                font-size: 0.6rem;
+                padding: 0.2rem 0.7rem;
+            }
+        }
+        
+        /* Force liturgical theme colors */
+        body.lent {
+            --crimson: #5E2A4A;
+            --crimson-deep: #3B1E31;
+            --gold: #B89A40;
+            --grad-crimson: linear-gradient(135deg, #3B1E31 0%, #5E2A4A 100%);
+        }
+        
+        body.advent {
+            --crimson: #4C2F4B;
+            --crimson-deep: #2C1C2B;
+            --gold: #C9A84C;
+            --grad-crimson: linear-gradient(135deg, #2C1C2B 0%, #4C2F4B 100%);
+        }
+        
+        body.christmas {
+            --crimson: #9B2E2E;
+            --crimson-deep: #701F1F;
+            --gold: #F5D742;
+            --grad-crimson: linear-gradient(135deg, #701F1F 0%, #B43B3B 100%);
+        }
+        
+        body.easter {
+            --crimson: #B3413A;
+            --crimson-deep: #8B2C2C;
+            --gold: #F5E56B;
+            --grad-crimson: linear-gradient(135deg, #8B2C2C 0%, #B3413A 100%);
+        }
+        
+        body.ordinary {
+            --crimson: #2C6E2F;
+            --crimson-deep: #1F4F21;
+            --gold: #C9B36B;
+            --grad-crimson: linear-gradient(135deg, #1F4F21 0%, #2C6E2F 100%);
+        }
+        
+        /* Force theme application */
+        .section-title {
+            color: var(--crimson-deep) !important;
+        }
+        
+        .section-title::after {
+            background: var(--grad-gold) !important;
+        }
+        
+        .link-details h3, .social-showcase-card h3, .contact-details h4 {
+            color: var(--crimson-deep) !important;
+        }
+        
+        .link-icon, .contact-icon {
+            background: var(--grad-crimson) !important;
+        }
+        
+        .btn-social, .btn-view {
+            background: var(--grad-crimson) !important;
+        }
+        
+        .btn-social:hover {
+            background: var(--grad-gold) !important;
+        }
+        
+        nav {
+            background: var(--grad-crimson) !important;
+        }
+        
+        footer {
+            background: var(--crimson-deep) !important;
+        }
+        
+        .btn-link:hover {
+            background: var(--crimson) !important;
+        }
+        
+        .link-card {
+            border-right-color: var(--crimson) !important;
+        }
+        
+        .link-card:hover {
+            border-right-color: var(--gold) !important;
+        }
+        
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            will-change: transform, opacity;
+            filter: blur(0.6px);
+            z-index: 9999;
+        }
+        
+        @keyframes floatFall {
+            0% { transform: translateY(-15vh) rotate(0deg) translateX(0); opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(30px); opacity: 0; }
+        }
+        
+        @keyframes gentleDrift {
+            0% { transform: translateY(-12vh) rotate(0deg) translateX(0); opacity: 0.85; }
+            100% { transform: translateY(110vh) rotate(520deg) translateX(-25px); opacity: 0; }
+        }
+        
+        /* Library card styles */
+        .library-card {
+            background: var(--white);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(201,168,76,0.15);
+        }
+        
+        .library-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .library-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--gold);
+            cursor: pointer;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-content h3 {
+            color: var(--crimson-deep);
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-view {
+            display: inline-block;
+            padding: 0.6rem 1.6rem;
+            background: var(--grad-crimson);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 0.93rem;
+        }
+        
+        .btn-view:hover {
+            background: transparent;
+            border: 2px solid var(--crimson);
+            color: var(--crimson);
+        }
+        
+        iframe {
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+    </style>
 </head>
 <body>
 <div id="season-container"></div>
+
+
 <nav>
     <div class="logo">
         <img src="logo.jpg" alt="Logo">
         <img src="chi3ar2026.png" alt="Chi3ar">
     </div>
-
     <h1>أخوية طلائع العذراء – إهمج</h1>
-
     <ul class="nav-links">
         <li><a href="index.html">الرئيسية</a></li>
         <li><a href="about.html">من نحن</a></li>
@@ -25,21 +224,24 @@
     </ul>
 </nav>
 
-<!-- Library Section with Visible Images -->
+<!-- Library Section -->
 <section class="section" id="library">
     <div class="section-title">مكتبة الطّلائعي</div>
     <div class="gallery library-gallery">
-        <div class="card library-card">
+        <div class="library-card">
             <img src="salat.png" alt="صلاة الطّلائعيّ">
             <div class="card-content">
                 <h3>صلاة الطّلائعيّ</h3>
                 <p>صلاة خاصة للطّلائع</p>
+                <button class="btn-view" data-img="salat.png" data-title="صلاة الطّلائعيّ">عرض الصلاة</button>
             </div>
         </div>
-        <div class="card library-card">
+        <div class="library-card">
             <img src="rules.jpeg" alt="قيود عامّة">
             <div class="card-content">
                 <h3>قيود عامّة</h3>
+                <p>القيود العامة للأخوية</p>
+                <button class="btn-view" data-img="rules.jpeg" data-title="قيود عامّة">عرض القيود</button>
             </div>
         </div>
     </div>
@@ -57,7 +259,6 @@
                 <a href="https://youtu.be/1KSivo2FOgM?si=lc4u_s_5l3BFud1r" target="_blank" class="btn-link">زيارة الرابط</a>
             </div>
         </div>
-        
         <div class="link-card">
             <div class="link-icon">🌐</div>
             <div class="link-details">
@@ -66,22 +267,20 @@
                 <a href="https://www.tala2e3eklimjbeil.org/" target="_blank" class="btn-link">زيارة الرابط</a>
             </div>
         </div>
-        
         <div class="link-card">
             <div class="link-icon">📱</div>
             <div class="link-details">
                 <h3>موقع اللّجنة المركزيّة</h3>
                 <p>الموقع الرسمي للّجنة المركزيّة</p>
-                <a href="https://sites.google.com/view/akhawiyat-tala2e3/home?fbclid=PAb21jcAPglaFleHRuA2FlbQIxMQABp6aoG5kJscPMKDb8UVN1vQBiG_j6x3NbI0lipocW8W-aWyMdbfh33V0HpaBa_aem_-9MCySghSX24VLIhWaxqMQ" target="_blank" class="btn-link">زيارة الرابط</a>
+                <a href="https://sites.google.com/view/akhawiyat-tala2e3/home" target="_blank" class="btn-link">زيارة الرابط</a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Social Media Section with Visible Icons -->
+<!-- Social Media Section -->
 <section class="section" id="social">
     <div class="section-title">صفحاتنا على التواصل الاجتماعي</div>
-    
     <div class="social-showcase">
         <div class="social-showcase-card">
             <img src="instagram.png" alt="Instagram" class="social-showcase-img">
@@ -89,14 +288,12 @@
             <p>تابعونا على انستغرام لكل جديد</p>
             <a href="https://www.instagram.com/tala2e3_ehmej?igsh=MTJtZHRyd2F2dDEy" target="_blank" class="btn-social">متابعة</a>
         </div>
-        
         <div class="social-showcase-card">
             <img src="facebook.png" alt="Facebook" class="social-showcase-img">
             <h3>فيسبوك</h3>
             <p>صفحتنا الرسمية على فيسبوك</p>
             <a href="https://www.facebook.com/share/1AeWJUEdTs/" target="_blank" class="btn-social">متابعة</a>
         </div>
-        
         <div class="social-showcase-card">
             <img src="mail.png" alt="Email" class="social-showcase-img">
             <h3>البريد الإلكتروني</h3>
@@ -117,7 +314,6 @@
                 <p>رعيّة سيّدة الشّير، إهمج - قضاء جبيل</p>
             </div>
         </div>
-        
         <div class="contact-info-item">
             <div class="contact-icon">📞</div>
             <div class="contact-details">
@@ -125,7 +321,6 @@
                 <p>81 239 091</p>
             </div>
         </div>
-        
         <div class="contact-info-item">
             <div class="contact-icon">⏰</div>
             <div class="contact-details">
@@ -133,7 +328,6 @@
                 <p>كل خميس الساعة ٦:٠٠ مساءً</p>
             </div>
         </div>
-        
         <div class="contact-info-item">
             <div class="contact-icon">📧</div>
             <div class="contact-details">
@@ -144,12 +338,12 @@
     </div>
 </section>
 
-<!-- Map Section with Direct Google Maps Embed -->
+<!-- Map Section -->
 <section class="section">
     <div class="section-title">موقعنا</div>
     <div class="map-container">
         <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m17!2m11!1m3!1d3311.659128757358!2d35.790522!3d34.123289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15200f14c1b9c6c7%3A0x9b8e9f3e8e8e8e8e!2s4QFR%2B866%20Ehmej!5e0!3m2!1sen!2slb!4v1234567890" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.659128757358!2d35.788522!3d34.123289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15200f14c1b9c6c7%3A0x9b8e9f3e8e8e8e8e!2sEhmej!5e0!3m2!1sen!2slb!4v1700000000000" 
             width="100%" 
             height="400" 
             style="border:0; border-radius: 20px; box-shadow: var(--shadow-lg);" 
@@ -169,6 +363,201 @@
         <a href="contact.html">مكتبتي</a>
     </div>
 </footer>
-<script src="script.js"></script>
+
+<script>
+    // ==================== LITURGICAL CALENDAR & SEASONAL PARTICLES ====================
+    (function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+        
+        let liturgicalSeason = 'ordinary';
+        let seasonNameArabic = 'الزمن العادي';
+        let particleType = 'leaf';
+        let particleCount = 55;
+        
+        function getEasterDate(y) {
+            if(y === 2026) return new Date(2026, 3, 5);
+            if(y === 2025) return new Date(2025, 3, 20);
+            if(y === 2027) return new Date(2027, 2, 28);
+            return new Date(y, 2, 31);
+        }
+        
+        const easterDate = getEasterDate(year);
+        const lentStart = new Date(easterDate);
+        lentStart.setDate(easterDate.getDate() - 46);
+        const lentEnd = new Date(easterDate);
+        lentEnd.setDate(easterDate.getDate() - 1);
+        const easterSeasonEnd = new Date(easterDate);
+        easterSeasonEnd.setDate(easterDate.getDate() + 50);
+        
+        const isAdvent = (month === 10 && day >= 30) || (month === 11 && day <= 24);
+        const isChristmas = (month === 11 && day >= 25) || (month === 0 && day <= 13);
+        const isLent = now >= lentStart && now <= lentEnd;
+        const isEasterSeason = now >= easterDate && now <= easterSeasonEnd;
+        
+        if(isChristmas) {
+            liturgicalSeason = 'christmas';
+            seasonNameArabic = 'زمن الميلاد المجيد ✨';
+            particleType = 'star';
+            particleCount = 70;
+        } 
+        else if(isLent) {
+            liturgicalSeason = 'lent';
+            seasonNameArabic = 'زمن الصوم الكبير 🕯️';
+            particleType = 'leaf';
+            particleCount = 45;
+        }
+        else if(isEasterSeason) {
+            liturgicalSeason = 'easter';
+            seasonNameArabic = 'زمن القيامة المجيدة 🌅';
+            particleType = 'petal';
+            particleCount = 85;
+        }
+        else if(isAdvent) {
+            liturgicalSeason = 'advent';
+            seasonNameArabic = 'زمن المجيء (الانتظار) 🕯️';
+            particleType = 'snow';
+            particleCount = 60;
+        }
+        else {
+            const m = month;
+            if(m >= 2 && m <= 4) { particleType = 'petal'; particleCount = 70; seasonNameArabic = 'زمن البهجة – ربيع العذراء'; }
+            else if(m >= 5 && m <= 8) { particleType = 'sun'; particleCount = 40; seasonNameArabic = 'زمن النمو – صيف الخدمة'; }
+            else if(m >= 9 && m <= 10) { particleType = 'leaf'; particleCount = 65; seasonNameArabic = 'زمن العطاء – خريف البركات'; }
+            else { particleType = 'snow'; particleCount = 55; seasonNameArabic = 'زمن الرجاء – شتاء المحبة'; }
+        }
+        
+        // Apply season class
+        document.body.classList.add(liturgicalSeason);
+        
+        // Update badge
+        const badge = document.getElementById('liturgicalBadge');
+        if(badge) badge.innerHTML = `🕊️ ${seasonNameArabic} 🕊️`;
+        
+        // Apply CSS variables
+        const root = document.documentElement;
+        if(liturgicalSeason === 'lent') {
+            root.style.setProperty('--crimson', '#5E2A4A');
+            root.style.setProperty('--crimson-deep', '#3B1E31');
+            root.style.setProperty('--gold', '#B89A40');
+        } else if(liturgicalSeason === 'advent') {
+            root.style.setProperty('--crimson', '#4C2F4B');
+            root.style.setProperty('--crimson-deep', '#2C1C2B');
+        } else if(liturgicalSeason === 'christmas') {
+            root.style.setProperty('--crimson', '#9B2E2E');
+            root.style.setProperty('--crimson-deep', '#701F1F');
+            root.style.setProperty('--gold', '#F5D742');
+        } else if(liturgicalSeason === 'easter') {
+            root.style.setProperty('--crimson', '#B3413A');
+            root.style.setProperty('--crimson-deep', '#8B2C2C');
+            root.style.setProperty('--gold', '#F5E56B');
+        } else {
+            root.style.setProperty('--crimson', '#2C6E2F');
+            root.style.setProperty('--crimson-deep', '#1F4F21');
+            root.style.setProperty('--gold', '#C9B36B');
+        }
+        
+        // Particles System
+        const container = document.getElementById('season-container');
+        if(container) {
+            container.innerHTML = '';
+            const isMobile = window.innerWidth < 768;
+            let finalCount = isMobile ? Math.floor(particleCount * 0.5) : particleCount;
+            finalCount = Math.min(finalCount, 90);
+            const animationStyle = particleType === 'petal' ? 'gentleDrift' : 'floatFall';
+            
+            if(!document.getElementById('particle-styles')) {
+                const style = document.createElement('style');
+                style.id = 'particle-styles';
+                style.textContent = `
+                    .particle.snow { background: radial-gradient(circle at 30% 30%, #ffffff, #d4eaff); border-radius: 50%; box-shadow: 0 0 8px rgba(255,255,240,0.8); }
+                    .particle.petal { background: linear-gradient(145deg, #FFB7C5, #FF8DA1); border-radius: 150% 0 150% 0; transform: rotate(45deg); opacity: 0.8; }
+                    .particle.leaf { background: radial-gradient(ellipse at 40% 40%, #D4783A, #9B4B1A); border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; opacity: 0.7; }
+                    .particle.sun { background: radial-gradient(circle, rgba(255,220,100,0.85), rgba(255,180,50,0.3)); border-radius: 50%; box-shadow: 0 0 12px rgba(255,200,50,0.6); }
+                    .particle.star { background: radial-gradient(circle, #FFF5B0, #FFE55C); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); width: 12px !important; height: 12px !important; }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            for(let i=0; i<finalCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', particleType);
+                
+                let size = 0;
+                if(particleType === 'snow') size = Math.random() * 10 + 5;
+                else if(particleType === 'petal') size = Math.random() * 12 + 7;
+                else if(particleType === 'leaf') size = Math.random() * 14 + 6;
+                else if(particleType === 'sun') size = Math.random() * 8 + 5;
+                else if(particleType === 'star') size = Math.random() * 10 + 8;
+                else size = Math.random() * 8 + 4;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animation = `${animationStyle} ${Math.random() * 9 + 7}s linear ${Math.random() * 8}s infinite`;
+                particle.style.top = -Math.random() * 100 + 'vh';
+                container.appendChild(particle);
+            }
+        }
+        
+        // Lightbox Modal
+        function initLightbox() {
+            if(document.getElementById('imageModal')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'imageModal';
+            modalDiv.className = 'modal';
+            modalDiv.innerHTML = `<span class="close-modal">&times;</span><img class="modal-content" id="modalImage"><div id="modalCaption" class="modal-caption"></div>`;
+            document.body.appendChild(modalDiv);
+            
+            const closeBtn = modalDiv.querySelector('.close-modal');
+            closeBtn.onclick = () => modalDiv.style.display = 'none';
+            modalDiv.onclick = (e) => { if(e.target === modalDiv) modalDiv.style.display = 'none'; };
+            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modalDiv.style.display === 'block') modalDiv.style.display = 'none'; });
+        }
+        
+        function setupLightbox() {
+            const modal = document.getElementById('imageModal');
+            if(!modal) return;
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            
+            const libraryImages = document.querySelectorAll('.library-card img');
+            libraryImages.forEach(img => {
+                img.onclick = function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    const parent = this.closest('.library-card');
+                    const title = parent?.querySelector('h3')?.innerText || '';
+                    caption.innerText = title;
+                };
+            });
+            
+            const buttons = document.querySelectorAll('.btn-view');
+            buttons.forEach(btn => {
+                btn.onclick = function() {
+                    const imgSrc = this.getAttribute('data-img');
+                    const imgTitle = this.getAttribute('data-title');
+                    if(imgSrc) {
+                        modal.style.display = 'block';
+                        modalImg.src = imgSrc;
+                        caption.innerText = imgTitle || '';
+                    }
+                };
+            });
+        }
+        
+        initLightbox();
+        setupLightbox();
+        
+        // Active nav
+        const currentPage = window.location.pathname.split('/').pop() || 'contact.html';
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if(link.getAttribute('href') === currentPage) link.classList.add('active');
+            else link.classList.remove('active');
+        });
+    })();
+</script>
 </body>
 </html>

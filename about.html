@@ -2,10 +2,249 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>من نحن - طلائع إهمج</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Liturgical badge positioning */
+        .liturgical-badge {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            left: auto;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--gold-bright, #E8C85A);
+            font-weight: 600;
+            z-index: 1001;
+            border: 1px solid rgba(201,168,76,0.4);
+            font-family: 'Amiri', serif;
+            pointer-events: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .liturgical-badge {
+                top: 115px;
+                right: 10px;
+                left: auto;
+                font-size: 0.65rem;
+                padding: 0.25rem 0.9rem;
+                background: rgba(0,0,0,0.75);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .liturgical-badge {
+                top: 105px;
+                right: 8px;
+                font-size: 0.6rem;
+                padding: 0.2rem 0.7rem;
+            }
+        }
+        
+        /* Ensure liturgical theme variables work */
+        body.lent {
+            --crimson: #5E2A4A;
+            --crimson-deep: #3B1E31;
+            --crimson-mid: #7D3C62;
+            --gold: #B89A40;
+            --gold-bright: #CDAF5A;
+            --grad-crimson: linear-gradient(135deg, #3B1E31 0%, #5E2A4A 100%);
+        }
+        
+        body.advent {
+            --crimson: #4C2F4B;
+            --crimson-deep: #2C1C2B;
+            --crimson-mid: #6A4168;
+            --gold: #C9A84C;
+            --grad-crimson: linear-gradient(135deg, #2C1C2B 0%, #4C2F4B 100%);
+        }
+        
+        body.christmas {
+            --crimson: #9B2E2E;
+            --crimson-deep: #701F1F;
+            --crimson-mid: #B84343;
+            --gold: #F5D742;
+            --gold-bright: #FFE98A;
+            --grad-crimson: linear-gradient(135deg, #701F1F 0%, #B43B3B 100%);
+        }
+        
+        body.easter {
+            --crimson: #B3413A;
+            --crimson-deep: #8B2C2C;
+            --crimson-mid: #C95C54;
+            --gold: #F5E56B;
+            --gold-bright: #FFEF8A;
+            --grad-crimson: linear-gradient(135deg, #8B2C2C 0%, #B3413A 100%);
+        }
+        
+        body.ordinary {
+            --crimson: #2C6E2F;
+            --crimson-deep: #1F4F21;
+            --crimson-mid: #3E8A42;
+            --gold: #C9B36B;
+            --gold-bright: #DCCB8A;
+            --grad-crimson: linear-gradient(135deg, #1F4F21 0%, #2C6E2F 100%);
+        }
+        
+        /* Force theme application on sections */
+        .section-title {
+            color: var(--crimson-deep) !important;
+        }
+        
+        .section-title::after {
+            background: var(--grad-gold) !important;
+        }
+        
+        .sub-section-title {
+            color: var(--crimson) !important;
+            border-right-color: var(--gold) !important;
+        }
+        
+        .member-card h4, .member-info h4 {
+            color: var(--crimson-deep) !important;
+        }
+        
+        .timeline-year {
+            background: var(--grad-crimson) !important;
+        }
+        
+        .timeline-content h4 {
+            color: var(--crimson-deep) !important;
+        }
+        
+        .event-item {
+            border-right-color: var(--crimson) !important;
+        }
+        
+        .event-item:hover {
+            border-right-color: var(--gold) !important;
+        }
+        
+        .btn-primary {
+            background: var(--crimson) !important;
+        }
+        
+        .btn-primary:hover {
+            background: var(--crimson-deep) !important;
+        }
+        
+        nav {
+            background: var(--grad-crimson) !important;
+        }
+        
+        footer {
+            background: var(--crimson-deep) !important;
+        }
+        
+        .stat-number {
+            color: var(--crimson) !important;
+        }
+        
+        .action-card:hover::before {
+            background: var(--grad-crimson) !important;
+        }
+        
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            will-change: transform, opacity;
+            filter: blur(0.6px);
+            z-index: 9999;
+        }
+        
+        @keyframes floatFall {
+            0% { transform: translateY(-15vh) rotate(0deg) translateX(0); opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(30px); opacity: 0; }
+        }
+        
+        @keyframes gentleDrift {
+            0% { transform: translateY(-12vh) rotate(0deg) translateX(0); opacity: 0.85; }
+            100% { transform: translateY(110vh) rotate(520deg) translateX(-25px); opacity: 0; }
+        }
+        
+        body.lent .hero::before {
+            content: "✟";
+            position: absolute;
+            bottom: 15%;
+            left: 7%;
+            font-size: 4rem;
+            opacity: 0.1;
+            color: var(--gold);
+            pointer-events: none;
+        }
+        
+        body.easter .hero::after {
+            content: "✝ ✞ ✟";
+            font-size: 1.6rem;
+            letter-spacing: 6px;
+        }
+        
+        body.christmas .hero-text h3 {
+            text-shadow: 0 0 12px rgba(255,215,0,0.6);
+        }
+        
+        /* Ensure member cards display correctly */
+        .member-card {
+            background: var(--white);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            text-align: center;
+            border: 1px solid rgba(201,168,76,0.12);
+        }
+        
+        .member-card .member-info {
+            padding: 1rem;
+        }
+        
+        .member-card h4 {
+            margin: 0.75rem 0 0.25rem;
+            font-size: 1rem;
+        }
+        
+        .member-card .member-desc {
+            font-size: 0.85rem;
+            padding: 0 0.5rem 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .members-grid.compact {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.85rem;
+        }
+        
+        .member-mini {
+            background: var(--white);
+            padding: 0.7rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--crimson-deep);
+            font-size: 0.88rem;
+            border: 1px solid rgba(201,168,76,0.15);
+        }
+        
+        .member-mini:hover {
+            transform: translateY(-3px);
+            background: va(--grad-crimson);
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <div id="season-container"></div>
@@ -14,9 +253,7 @@
         <img src="logo.jpg" alt="Logo">
         <img src="chi3ar2026.png" alt="Chi3ar">
     </div>
-
     <h1>أخوية طلائع العذراء – إهمج</h1>
-
     <ul class="nav-links">
         <li><a href="index.html">الرئيسية</a></li>
         <li><a href="about.html" class="active">من نحن</a></li>
@@ -31,44 +268,15 @@
     <div class="about-content">
         <div class="about-text">
             <h3>عن بلدة إهمج</h3>
-            <p>تقع إهمج في منطقة وسط جرود جبيل، على ارتفاع 1250 متراً فوق سطح البحر، وتبعد 22 كلم. عن مركز القضاء وحوالي 60 كلم. عن العاصمة بيروت. يبلغ عدد سكانها حوالي 5000 نسمة .
-
-تعود تسمية بلدة اهمج الى احتمالين : الأوّل من الآرامية ويعني المستترة لوقوعها بين مجموعة غابات جبلية ، والثاني من السريانية ويعني رأس الوادي .            </p>
-            <p>
-           كنيسة سيدة الشير الرعائية العجائبية دعيت بهذا
-            الإسم نسبةً إلى المكان الذي أقيمت عليه وهو شير صخري يبلغ 
-            ارتفاعه حوالي خمسين متراً. أعيد بناء الكنيسة بعد إحراقها سنة 1676 وبعد عودة الأهالي إلى إهمج، 
-             بدأ العمل في بناء الكنيسة سنة 1900 وتم إنجازها في العام 1920.
-             عجائب سيدة الشير:
-<br>
-– خلّصت خادم الرعية، وكان يومئذٍ وكيلاً للوقف بعدأنهوى عن سطحهاالمرتفع.
-<br>
-– أحيت طفلاً من الإخوان الشيعة بعد أن وُضع أمام المذبح الكبير وكان قد فارق الحياة.
-<br>
-– أعادت العافية والصحة إلى أحد الشباب بعد أن وقعت يد الجرس الحديدية على رأسه في ليلة عيد إنتقالها.
-            </p>
+            <p>تقع إهمج في منطقة وسط جرود جبيل، على ارتفاع 1250 متراً فوق سطح البحر، وتبعد 22 كلم. عن مركز القضاء وحوالي 60 كلم. عن العاصمة بيروت. يبلغ عدد سكانها حوالي 5000 نسمة. تعود تسمية بلدة اهمج الى احتمالين : الأوّل من الآرامية ويعني المستترة لوقوعها بين مجموعة غابات جبلية ، والثاني من السريانية ويعني رأس الوادي.</p>
+            <p>كنيسة سيدة الشير الرعائية العجائبية دعيت بهذا الإسم نسبةً إلى المكان الذي أقيمت عليه وهو شير صخري يبلغ ارتفاعه حوالي خمسين متراً. أعيد بناء الكنيسة بعد إحراقها سنة 1676 وبعد عودة الأهالي إلى إهمج، بدأ العمل في بناء الكنيسة سنة 1900 وتم إنجازها في العام 1920. عجائب سيدة الشير:<br>– خلّصت خادم الرعية، وكان يومئذٍ وكيلاً للوقف بعدأنهوى عن سطحهاالمرتفع.<br>– أحيت طفلاً من الإخوان الشيعة بعد أن وُضع أمام المذبح الكبير وكان قد فارق الحياة.<br>– أعادت العافية والصحة إلى أحد الشباب بعد أن وقعت يد الجرس الحديدية على رأسه في ليلة عيد إنتقالها.</p>
 
             <h3>عن طلائع إهمج</h3>
-            <p>
-                طلائع رعيّة سيّدة الشّير هي حركة  كنسيّة ضمن أخويّات الحبل بلا دنس، تأسست بهدف 
-                تنشئة الطلائع من عمر  ١٢ ل ١٨ سنة روحيًا ورسوليًا واجتماعيًا. نحن عائلة واحدة 
-                تجمعنا محبة المسيح ورعاية العذراء مريم، نسعى معاً لبناء 
-                شخصية متوازنة، تجمع بين العمق الروحي والوعي 
-                الاجتماعي والثقافي.
-            </p>
-            <p>
-                تعتمد حركتنا على نظام مرحلي يواكب الطّلائع،
-                 من خلال لقاءات أسبوعية، أنشطة روحية، مخيمات صيفية، 
-                وخدمات اجتماعية. نؤمن بأن الشباب هم كنيسة اليوم وليس فقط 
-                كنيسة الغد، لذلك نعمل على إعدادهم ليكونوا رسلاً في مجتمعهم 
-                وشهوداً للمسيح حيثما حلّوا.
-            </p>
+            <p>طلائع رعيّة سيّدة الشّير هي حركة كنسيّة ضمن أخويّات الحبل بلا دنس، تأسست بهدف تنشئة الطلائع من عمر ١٢ ل ١٨ سنة روحيًا ورسوليًا واجتماعيًا. نحن عائلة واحدة تجمعنا محبة المسيح ورعاية العذراء مريم، نسعى معاً لبناء شخصية متوازنة، تجمع بين العمق الروحي والوعي الاجتماعي والثقافي.</p>
+            <p>تعتمد حركتنا على نظام مرحلي يواكب الطّلائع، من خلال لقاءات أسبوعية، أنشطة روحية، مخيمات صيفية، وخدمات اجتماعية. نؤمن بأن الشباب هم كنيسة اليوم وليس فقط كنيسة الغد، لذلك نعمل على إعدادهم ليكونوا رسلاً في مجتمعهم وشهوداً للمسيح حيثما حلّوا.</p>
 
             <h3>رسالتنا</h3>
-            <p>
-                نسعى في طلائع إهمج إلى تكوين شخصية مسيحية متكاملة، 
-                من خلال برامج روحية ورسالية تهدف إلى
-            </p>
+            <p>نسعى في طلائع إهمج إلى تكوين شخصية مسيحية متكاملة، من خلال برامج روحية ورسالية تهدف إلى</p>
             <ul class="mission-list">
                 <li>تعميق الحياة الروحية والعلاقة الشخصية مع الله</li>
                 <li>تنمية المواهب والقدرات الشخصية</li>
@@ -110,7 +318,9 @@
                 <img src="boutros2.jpeg" alt="العمدة">
                 <div class="member-role">الرئيس</div>
             </div>
-            <h4>بطرس حردان</h4>
+            <div class="member-info">
+                <h4>بطرس حردان</h4>
+            </div>
         </div>
 
         <div class="member-card">
@@ -118,7 +328,9 @@
                 <img src="jose.jpeg" alt="نائب العمدة">
                 <div class="member-role">نائب الرّئيس</div>
             </div>
-            <h4>جوزي أبي سعد</h4>
+            <div class="member-info">
+                <h4>جوزي أبي سعد</h4>
+            </div>
         </div>
 
         <div class="member-card">
@@ -126,7 +338,9 @@
                 <img src="andrea.jpeg" alt="أمين السر">
                 <div class="member-role">أمين السر</div>
             </div>
-            <h4>أندريا ضاهر</h4>
+            <div class="member-info">
+                <h4>أندريا ضاهر</h4>
+            </div>
         </div>
 
         <div class="member-card">
@@ -134,99 +348,104 @@
                 <img src="marina.jpeg" alt="أمين الصندوق">
                 <div class="member-role">أمين الصندوق</div>
             </div>
-            <h4>مارينا متّى</h4>
+            <div class="member-info">
+                <h4>مارينا متّى</h4>
+            </div>
         </div>
 
-     <div class="member-card">
+        <div class="member-card">
             <div class="member-image">
-                <img src="nathalia.jpeg" alt="أمين الصندوق">
+                <img src="nathalia.jpeg" alt="وكيل الرسالة">
                 <div class="member-role">وكيل الرسالة</div>
             </div>
-            <h4>نتاليا جبرايل</h4>
+            <div class="member-info">
+                <h4>نتاليا جبرايل</h4>
+            </div>
         </div>
-    
 
-    <div class="member-card">
+        <div class="member-card">
             <div class="member-image">
-                <img src="charbel.jpeg" alt="أمين الصندوق">
+                <img src="charbel.jpeg" alt="وكيل التنشئة">
                 <div class="member-role">وكيل التنشئة</div>
             </div>
-            <h4>شربل الخوري</h4>
+            <div class="member-info">
+                <h4>شربل الخوري</h4>
+            </div>
         </div>
-    
 
-    <div class="member-card">
+        <div class="member-card">
             <div class="member-image">
-                <img src="therezia.jpeg" alt="أمين الصندوق">
+                <img src="therezia.jpeg" alt="وكيل الإعلام">
                 <div class="member-role">وكيل الإعلام</div>
             </div>
-            <h4>تيريزيا خليفة</h4>
+            <div class="member-info">
+                <h4>تيريزيا خليفة</h4>
+            </div>
         </div>
-  
 
-    <div class="member-card">
+        <div class="member-card">
             <div class="member-image">
-                <img src="peter.jpeg" alt="أمين الصندوق">
+                <img src="peter.jpeg" alt="وكيل النّشاطات">
                 <div class="member-role">وكيل النّشاطات</div>
             </div>
-            <h4>بيتر أبي رميا</h4>
+            <div class="member-info">
+                <h4>بيتر أبي رميا</h4>
+            </div>
         </div>
     </div>
- </div>
-   
 
     <!-- Active Members -->
     <h3 class="sub-section-title">الأعضاء</h3>
     <div class="members-grid compact">
         <div class="member-mini">إيمي أبي سمعان</div>
-<div class="member-mini">أندريا ضاهر</div>
-<div class="member-mini">أنجي أبي خليل</div>
-<div class="member-mini">سيلين الحداد</div>
-<div class="member-mini">سيلين ضاهر</div>
-<div class="member-mini">شربل أبي رميا</div>
-<div class="member-mini">شربل رميا</div>
-<div class="member-mini">شربل جبرايل</div>
-<div class="member-mini">شاريل بركات</div>
-<div class="member-mini">كلوي أبي رميا</div>
-<div class="member-mini">كريستا متى</div>
-<div class="member-mini">سيبيل متى</div>
-<div class="member-mini">دارين جبرايل</div>
-<div class="member-mini">إليز بشير أبي رميا</div>
-<div class="member-mini">غاييل نعمة</div>
-<div class="member-mini">جورج قسطنطين</div>
-<div class="member-mini">جورجو حردان</div>
-<div class="member-mini">جنى شويري</div>
-<div class="member-mini">جوني خليفة</div>
-<div class="member-mini">جو عبود</div>
-<div class="member-mini">جو خليفة</div>
-<div class="member-mini">جويا أبي يونس</div>
-<div class="member-mini">لين ضاهر</div>
-<div class="member-mini">ماراناأبي يونس</div>
-<div class="member-mini">مارغريتا أبي رميا</div>
-<div class="member-mini">مارغريت ماري شليطا</div>
-<div class="member-mini">ماريان أبي سعد</div>
-<div class="member-mini">ماريان متى</div>
-<div class="member-mini">ماري أنطوانيت شليطا</div>
-<div class="member-mini">ماري جوزي أبي يونس</div>
-<div class="member-mini">ماري تيريز خليفة</div>
-<div class="member-mini">ماريو أبي رميا</div>
-<div class="member-mini">ماري-فيونا أبي رميا</div>
-<div class="member-mini">مايك جبرايل </div>
-<div class="member-mini">ميشال سكاف</div>
-<div class="member-mini">نادين جوزيف ضاهر</div>
-<div class="member-mini">نور الحدّاد</div>
-<div class="member-mini">أوليفر شربل متى</div>
-<div class="member-mini">بيتر أبي يونس</div>
-<div class="member-mini">رالف جبرايل</div>
-<div class="member-mini">ريتا جبرايل</div>
-<div class="member-mini">رونالدو بركات</div>
-<div class="member-mini">روبي جبرايل</div>
-<div class="member-mini">رودي جبرايل</div>
-<div class="member-mini">سيرينا سميان</div>
-<div class="member-mini">ستيفان متى</div>
-<div class="member-mini">تيا ضاهر</div>
-<div class="member-mini">طوني المجبر</div>
-<div class="member-mini">ياسمين سكاف</div>
+        <div class="member-mini">أندريا ضاهر</div>
+        <div class="member-mini">أنجي أبي خليل</div>
+        <div class="member-mini">سيلين الحداد</div>
+        <div class="member-mini">سيلين ضاهر</div>
+        <div class="member-mini">شربل أبي رميا</div>
+        <div class="member-mini">شربل رميا</div>
+        <div class="member-mini">شربل جبرايل</div>
+        <div class="member-mini">شاريل بركات</div>
+        <div class="member-mini">كلوي أبي رميا</div>
+        <div class="member-mini">كريستا متى</div>
+        <div class="member-mini">سيبيل متى</div>
+        <div class="member-mini">دارين جبرايل</div>
+        <div class="member-mini">إليز بشير أبي رميا</div>
+        <div class="member-mini">غاييل نعمة</div>
+        <div class="member-mini">جورج قسطنطين</div>
+        <div class="member-mini">جورجو حردان</div>
+        <div class="member-mini">جنى شويري</div>
+        <div class="member-mini">جوني خليفة</div>
+        <div class="member-mini">جو عبود</div>
+        <div class="member-mini">جو خليفة</div>
+        <div class="member-mini">جويا أبي يونس</div>
+        <div class="member-mini">لين ضاهر</div>
+        <div class="member-mini">ماراناأبي يونس</div>
+        <div class="member-mini">مارغريتا أبي رميا</div>
+        <div class="member-mini">مارغريت ماري شليطا</div>
+        <div class="member-mini">ماريان أبي سعد</div>
+        <div class="member-mini">ماريان متى</div>
+        <div class="member-mini">ماري أنطوانيت شليطا</div>
+        <div class="member-mini">ماري جوزي أبي يونس</div>
+        <div class="member-mini">ماري تيريز خليفة</div>
+        <div class="member-mini">ماريو أبي رميا</div>
+        <div class="member-mini">ماري-فيونا أبي رميا</div>
+        <div class="member-mini">مايك جبرايل</div>
+        <div class="member-mini">ميشال سكاف</div>
+        <div class="member-mini">نادين جوزيف ضاهر</div>
+        <div class="member-mini">نور الحدّاد</div>
+        <div class="member-mini">أوليفر شربل متى</div>
+        <div class="member-mini">بيتر أبي يونس</div>
+        <div class="member-mini">رالف جبرايل</div>
+        <div class="member-mini">ريتا جبرايل</div>
+        <div class="member-mini">رونالدو بركات</div>
+        <div class="member-mini">روبي جبرايل</div>
+        <div class="member-mini">رودي جبرايل</div>
+        <div class="member-mini">سيرينا سميان</div>
+        <div class="member-mini">ستيفان متى</div>
+        <div class="member-mini">تيا ضاهر</div>
+        <div class="member-mini">طوني المجبر</div>
+        <div class="member-mini">ياسمين سكاف</div>
     </div>
 </section>
 
@@ -267,6 +486,204 @@
         <a href="contact.html">مكتبتي</a>
     </div>
 </footer>
-<script src="script.js"></script>
+
+<script>
+    // ==================== LITURGICAL CALENDAR & SEASONAL PARTICLES ====================
+    (function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+        
+        let liturgicalSeason = 'ordinary';
+        let seasonNameArabic = 'الزمن العادي';
+        let particleType = 'leaf';
+        let particleCount = 55;
+        
+        function getEasterDate(y) {
+            if(y === 2026) return new Date(2026, 3, 5);
+            if(y === 2025) return new Date(2025, 3, 20);
+            if(y === 2027) return new Date(2027, 2, 28);
+            return new Date(y, 2, 31);
+        }
+        
+        const easterDate = getEasterDate(year);
+        const lentStart = new Date(easterDate);
+        lentStart.setDate(easterDate.getDate() - 46);
+        const lentEnd = new Date(easterDate);
+        lentEnd.setDate(easterDate.getDate() - 1);
+        const easterSeasonEnd = new Date(easterDate);
+        easterSeasonEnd.setDate(easterDate.getDate() + 50);
+        
+        const isAdvent = (month === 10 && day >= 30) || (month === 11 && day <= 24);
+        const isChristmas = (month === 11 && day >= 25) || (month === 0 && day <= 13);
+        const isLent = now >= lentStart && now <= lentEnd;
+        const isEasterSeason = now >= easterDate && now <= easterSeasonEnd;
+        
+        if(isChristmas) {
+            liturgicalSeason = 'christmas';
+            seasonNameArabic = 'زمن الميلاد المجيد ✨';
+            particleType = 'star';
+            particleCount = 70;
+        } 
+        else if(isLent) {
+            liturgicalSeason = 'lent';
+            seasonNameArabic = 'زمن الصوم الكبير 🕯️';
+            particleType = 'leaf';
+            particleCount = 45;
+        }
+        else if(isEasterSeason) {
+            liturgicalSeason = 'easter';
+            seasonNameArabic = 'زمن القيامة المجيدة 🌅';
+            particleType = 'petal';
+            particleCount = 85;
+        }
+        else if(isAdvent) {
+            liturgicalSeason = 'advent';
+            seasonNameArabic = 'زمن المجيء (الانتظار) 🕯️';
+            particleType = 'snow';
+            particleCount = 60;
+        }
+        else {
+            const m = month;
+            if(m >= 2 && m <= 4) { particleType = 'petal'; particleCount = 70; seasonNameArabic = 'زمن البهجة – ربيع العذراء'; }
+            else if(m >= 5 && m <= 8) { particleType = 'sun'; particleCount = 40; seasonNameArabic = 'زمن النمو – صيف الخدمة'; }
+            else if(m >= 9 && m <= 10) { particleType = 'leaf'; particleCount = 65; seasonNameArabic = 'زمن العطاء – خريف البركات'; }
+            else { particleType = 'snow'; particleCount = 55; seasonNameArabic = 'زمن الرجاء – شتاء المحبة'; }
+        }
+        
+        // Apply season class to body
+        document.body.classList.add(liturgicalSeason);
+        
+        // Update badge
+        const badge = document.getElementById('liturgicalBadge');
+        if(badge) badge.innerHTML = `🕊️ ${seasonNameArabic} 🕊️`;
+        
+        // Apply CSS variables dynamically to ensure they work
+        const root = document.documentElement;
+        if(liturgicalSeason === 'lent') {
+            root.style.setProperty('--crimson', '#5E2A4A');
+            root.style.setProperty('--crimson-deep', '#3B1E31');
+            root.style.setProperty('--gold', '#B89A40');
+        } else if(liturgicalSeason === 'advent') {
+            root.style.setProperty('--crimson', '#4C2F4B');
+            root.style.setProperty('--crimson-deep', '#2C1C2B');
+        } else if(liturgicalSeason === 'christmas') {
+            root.style.setProperty('--crimson', '#9B2E2E');
+            root.style.setProperty('--crimson-deep', '#701F1F');
+            root.style.setProperty('--gold', '#F5D742');
+        } else if(liturgicalSeason === 'easter') {
+            root.style.setProperty('--crimson', '#B3413A');
+            root.style.setProperty('--crimson-deep', '#8B2C2C');
+            root.style.setProperty('--gold', '#F5E56B');
+        } else {
+            root.style.setProperty('--crimson', '#2C6E2F');
+            root.style.setProperty('--crimson-deep', '#1F4F21');
+            root.style.setProperty('--gold', '#C9B36B');
+        }
+        
+        // Particles System
+        const container = document.getElementById('season-container');
+        if(container) {
+            container.innerHTML = '';
+            const isMobile = window.innerWidth < 768;
+            let finalCount = isMobile ? Math.floor(particleCount * 0.5) : particleCount;
+            finalCount = Math.min(finalCount, 90);
+            const animationStyle = particleType === 'petal' ? 'gentleDrift' : 'floatFall';
+            
+            // Add particle styles if not present
+            if(!document.getElementById('particle-styles')) {
+                const style = document.createElement('style');
+                style.id = 'particle-styles';
+                style.textContent = `
+                    .particle.snow { background: radial-gradient(circle at 30% 30%, #ffffff, #d4eaff); border-radius: 50%; box-shadow: 0 0 8px rgba(255,255,240,0.8); }
+                    .particle.petal { background: linear-gradient(145deg, #FFB7C5, #FF8DA1); border-radius: 150% 0 150% 0; transform: rotate(45deg); opacity: 0.8; }
+                    .particle.leaf { background: radial-gradient(ellipse at 40% 40%, #D4783A, #9B4B1A); border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; opacity: 0.7; }
+                    .particle.sun { background: radial-gradient(circle, rgba(255,220,100,0.85), rgba(255,180,50,0.3)); border-radius: 50%; box-shadow: 0 0 12px rgba(255,200,50,0.6); }
+                    .particle.star { background: radial-gradient(circle, #FFF5B0, #FFE55C); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); width: 12px !important; height: 12px !important; }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            for(let i=0; i<finalCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', particleType);
+                
+                let size = 0;
+                if(particleType === 'snow') size = Math.random() * 10 + 5;
+                else if(particleType === 'petal') size = Math.random() * 12 + 7;
+                else if(particleType === 'leaf') size = Math.random() * 14 + 6;
+                else if(particleType === 'sun') size = Math.random() * 8 + 5;
+                else if(particleType === 'star') size = Math.random() * 10 + 8;
+                else size = Math.random() * 8 + 4;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                const duration = Math.random() * 9 + 7;
+                const delay = Math.random() * 8;
+                particle.style.animation = `${animationStyle} ${duration}s linear ${delay}s infinite`;
+                particle.style.top = -Math.random() * 100 + 'vh';
+                
+                if(particleType === 'petal' || particleType === 'leaf') {
+                    particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }
+                container.appendChild(particle);
+            }
+        }
+        
+        // Lightbox Modal
+        function initLightbox() {
+            if(document.getElementById('imageModal')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'imageModal';
+            modalDiv.className = 'modal';
+            modalDiv.innerHTML = `<span class="close-modal">&times;</span><img class="modal-content" id="modalImage" alt="صورة مكبرة"><div id="modalCaption" class="modal-caption"></div>`;
+            document.body.appendChild(modalDiv);
+            
+            const closeBtn = modalDiv.querySelector('.close-modal');
+            closeBtn.onclick = () => modalDiv.style.display = 'none';
+            modalDiv.onclick = (e) => { if(e.target === modalDiv) modalDiv.style.display = 'none'; };
+            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modalDiv.style.display === 'block') modalDiv.style.display = 'none'; });
+        }
+        
+        function setupClickableImages() {
+            const modal = document.getElementById('imageModal');
+            if(!modal) return;
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            const images = document.querySelectorAll('.member-image img, .about-image img');
+            
+            images.forEach(img => {
+                img.removeEventListener('click', img._handler);
+                const handler = function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    let txt = this.alt || '';
+                    const parentCard = this.closest('.member-card');
+                    if(parentCard) {
+                        const name = parentCard.querySelector('h4');
+                        if(name) txt = name.innerText;
+                        const role = parentCard.querySelector('.member-role, .member-role-badge');
+                        if(role && txt) txt = txt + ' - ' + role.innerText;
+                    }
+                    caption.innerText = txt || 'صورة تذكارية';
+                };
+                img._handler = handler;
+                img.addEventListener('click', handler);
+            });
+        }
+        
+        initLightbox();
+        setupClickableImages();
+        
+        // Active nav state
+        const currentPage = window.location.pathname.split('/').pop() || 'about.html';
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if(link.getAttribute('href') === currentPage) link.classList.add('active');
+            else link.classList.remove('active');
+        });
+    })();
+</script>
 </body>
 </html>

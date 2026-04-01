@@ -2,22 +2,86 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أخوية طلائع العذراء – إهمج</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>نشاطاتنا - طلائع إهمج</title>
     <link rel="icon" href="logo.jpg">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== ENHANCED SEASONAL & LITURGICAL THEMES ========== */
+        :root {
+            --liturgical-gold: #E8C85A;
+            --liturgical-violet: #4C2F4B;
+        }
+        body.lent { --crimson: #5E2A4A; --crimson-deep: #3B1E31; --gold: #B89A40; --grad-crimson: linear-gradient(135deg, #3B1E31 0%, #5E2A4A 100%); }
+        body.lent .hero { filter: saturate(0.92) sepia(0.08); }
+        body.advent { --crimson: #4C2F4B; --crimson-deep: #2C1C2B; --grad-crimson: linear-gradient(135deg, #2C1C2B 0%, #4C2F4B 100%); }
+        body.christmas { --crimson: #9B2E2E; --crimson-deep: #701F1F; --gold: #F5D742; --gold-bright: #FFE98A; --grad-crimson: linear-gradient(135deg, #701F1F 0%, #B43B3B 100%); }
+        body.christmas .hero-text h3 { text-shadow: 0 0 12px rgba(255,215,0,0.6); }
+        body.easter { --crimson: #B3413A; --crimson-deep: #8B2C2C; --gold: #F5E56B; --grad-crimson: linear-gradient(135deg, #A53F3F 0%, #D95C5C 100%); }
+        body.ordinary { --crimson: #2C6E2F; --crimson-deep: #1F4F21; --gold: #C9B36B; --grad-crimson: linear-gradient(135deg, #1F4F21 0%, #2C6E2F 100%); }
+        
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            will-change: transform, opacity;
+            filter: blur(0.6px);
+            z-index: 9999;
+        }
+        .particle.snow { background: radial-gradient(circle at 30% 30%, #ffffff, #d4eaff); box-shadow: 0 0 8px rgba(255,255,240,0.8); border-radius: 50%; }
+        .particle.petal { background: linear-gradient(145deg, #FFB7C5, #FF8DA1); border-radius: 150% 0 150% 0; transform: rotate(45deg); opacity: 0.8; }
+        .particle.leaf { background: radial-gradient(ellipse at 40% 40%, #D4783A, #9B4B1A); border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; opacity: 0.7; }
+        .particle.sun { background: radial-gradient(circle, rgba(255,220,100,0.85), rgba(255,180,50,0.3)); border-radius: 50%; box-shadow: 0 0 12px rgba(255,200,50,0.6); }
+        .particle.star { background: radial-gradient(circle, #FFF5B0, #FFE55C); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); width: 12px !important; height: 12px !important; }
+        
+        @keyframes floatFall { 0% { transform: translateY(-15vh) rotate(0deg) translateX(0); opacity: 0.9; } 100% { transform: translateY(110vh) rotate(360deg) translateX(30px); opacity: 0; } }
+        @keyframes gentleDrift { 0% { transform: translateY(-12vh) rotate(0deg) translateX(0); opacity: 0.85; } 100% { transform: translateY(110vh) rotate(520deg) translateX(-25px); opacity: 0; } }
+        
+        .liturgical-badge {
+            position: fixed;
+            top: 70px;
+            left: 15px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: var(--gold-bright, #E8C85A);
+            font-weight: 600;
+            z-index: 1001;
+            border-right: 2px solid var(--gold, #C9A84C);
+            font-family: 'Amiri', serif;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) { .liturgical-badge { top: 115px; left: 8px; font-size: 0.65rem; padding: 0.2rem 0.7rem; } }
+        
+        body.lent .hero::before {
+            content: "✟";
+            position: absolute;
+            bottom: 15%;
+            left: 7%;
+            font-size: 4rem;
+            opacity: 0.1;
+            color: var(--gold);
+            font-family: serif;
+            pointer-events: none;
+        }
+        
+        /* Additional styling for activities page */
+        .section-title i { font-style: normal; font-size: 1.8rem; margin-left: 0.5rem; }
+        .gallery { animation: fadeIn 0.5s ease-out; }
+    </style>
 </head>
 <body>
 <div id="season-container"></div>
+
 <nav>
     <div class="logo">
         <img src="logo.jpg" alt="Logo">
         <img src="chi3ar2026.png" alt="Chi3ar">
     </div>
-
     <h1>أخوية طلائع العذراء – إهمج</h1>
-
     <ul class="nav-links">
         <li><a href="index.html">الرئيسية</a></li>
         <li><a href="about.html">من نحن</a></li>
@@ -26,25 +90,15 @@
     </ul>
 </nav>
 
-<!--Past activities-->
+<!-- Past activities -->
 <section class="section" id="activities">
     <div class="section-title">نشاطات سابقة</div>
     <div class="gallery">
-        <div class="card"><img src="li3azar25.jpeg" alt="">
-            <h3>جولة لعازار ٢٠٢٥</h3>
-        </div>
-        <div class="card"><img src="entikheb251.jpeg" alt="">
-            <h3>إنتخاب عمدة جديدة</h3>
-        </div>
-        <div class="card"><img src="entikheb252.jpeg" alt="">
-            <h3>عيلة عمدات جديدة</h3>
-        </div>
-        <div class="card"><img src="rehle.jpeg" alt="">
-            <h3>رحلة ٢٠٢٥</h3>
-        </div>
-        <div class="card"><img src="kermes25.jpeg" alt="">
-            <h3>كرمس ٢٠٢٥</h3>
-        </div>
+        <div class="card"><img src="li3azar25.jpeg" alt="جولة لعازار ٢٠٢٥"><h3>جولة لعازار ٢٠٢٥</h3></div>
+        <div class="card"><img src="entikheb251.jpeg" alt="إنتخاب عمدة جديدة"><h3>إنتخاب عمدة جديدة</h3></div>
+        <div class="card"><img src="entikheb252.jpeg" alt="عيلة عمدات جديدة"><h3>عيلة عمدات جديدة</h3></div>
+        <div class="card"><img src="rehle.jpeg" alt="رحلة ٢٠٢٥"><h3>رحلة ٢٠٢٥</h3></div>
+        <div class="card"><img src="kermes25.jpeg" alt="كرمس ٢٠٢٥"><h3>كرمس ٢٠٢٥</h3></div>
     </div>
 </section>
 
@@ -52,150 +106,278 @@
 <section class="section">
     <div class="section-title">تشرين الأوّل ٢٠٢٥</div>
     <div class="gallery">
-        <div class="card"><img src="scheduleoct25.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="meetoct1.jpeg" alt="">
-            <h3>إجتماع إطلاق الولاية</h3>
-        </div>
-        <div class="card"><img src="meetoct2.jpeg" alt="">
-            <h3>إجتماع عن الرّسل</h3>
-        </div>
-        <div class="card"><img src="3idtala2e3.jpeg" alt="">
-            <h3>عيد الطّلائع</h3>
-        </div>
-        <div class="card"><img src="chhedethayet.jpeg" alt="">
-            <h3>شهادة حياة</h3>
-        </div>
+        <div class="card"><img src="scheduleoct25.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="meetoct1.jpeg" alt="إجتماع إطلاق الولاية"><h3>إجتماع إطلاق الولاية</h3></div>
+        <div class="card"><img src="meetoct2.jpeg" alt="إجتماع عن الرّسل"><h3>إجتماع عن الرّسل</h3></div>
+        <div class="card"><img src="3idtala2e3.jpeg" alt="عيد الطّلائع"><h3>عيد الطّلائع</h3></div>
+        <div class="card"><img src="chhedethayet.jpeg" alt="شهادة حياة"><h3>شهادة حياة</h3></div>
     </div>
 </section>
 
-<!--November 2025-->
+<!-- November 2025 -->
 <section class="section">
     <div class="section-title">تشرين الثّاني ٢٠٢٥</div>
     <div class="gallery">
-        <div class="card"><img src="schedulenov25.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="risele.jpeg" alt="">
-            <h3>رسالة في عين ورقة</h3>
-        </div>
-        <div class="card"><img src="redcross1.jpeg" alt="">
-            <h3>لقاء تدريبيّ</h3>
-        </div>
+        <div class="card"><img src="schedulenov25.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="risele.jpeg" alt="رسالة في عين ورقة"><h3>رسالة في عين ورقة</h3></div>
+        <div class="card"><img src="redcross1.jpeg" alt="لقاء تدريبيّ"><h3>لقاء تدريبيّ</h3></div>
     </div>
 </section>
 
-<!--December 2025-->
+<!-- December 2025 -->
 <section class="section">
     <div class="section-title">كانون الأوّل ٢٠٢٥</div>
     <div class="gallery">
-        <div class="card"><img src="scheduledec25.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="redcross2.jpeg" alt="">
-            <h3>لقاء تدريبيّ</h3>
-        </div>
-        <div class="card"><img src="tekris2025.jpeg" alt="">
-            <h3>تكريس أعضاء جدد</h3>
-        </div>
-        <div class="card"><img src="campnoel.jpeg" alt="">
-            <h3>مخيم ميلاد ٢٠٢٥</h3>
-        </div>
+        <div class="card"><img src="scheduledec25.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="redcross2.jpeg" alt="لقاء تدريبيّ"><h3>لقاء تدريبيّ</h3></div>
+        <div class="card"><img src="tekris2025.jpeg" alt="تكريس أعضاء جدد"><h3>تكريس أعضاء جدد</h3></div>
+        <div class="card"><img src="campnoel.jpeg" alt="مخيم ميلاد ٢٠٢٥"><h3>مخيم ميلاد ٢٠٢٥</h3></div>
     </div>
 </section>
 
-<!--January 2026-->
+<!-- January 2026 -->
 <section class="section">
     <div class="section-title">كانون الثّاني ٢٠٢٦</div>
     <div class="gallery">
-        <div class="card"><img src="schedulejan26.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="meetjan1.jpeg" alt="">
-            <h3>إجتماع عن الإحترام</h3>
-        </div>
-        <div class="card"><img src="soujoud26.jpeg" alt="">
-            <h3>السّجود الموحّد</h3>
-        </div>
+        <div class="card"><img src="schedulejan26.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="meetjan1.jpeg" alt="إجتماع عن الإحترام"><h3>إجتماع عن الإحترام</h3></div>
+        <div class="card"><img src="soujoud26.jpeg" alt="السّجود الموحّد"><h3>السّجود الموحّد</h3></div>
     </div>
 </section>
 
-<!--February 2026-->
+<!-- February 2026 -->
 <section class="section">
     <div class="section-title">شباط ٢٠٢٦</div>
     <div class="gallery">
-        <div class="card"><img src="schedulefeb26.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="meetfeb1.jpeg" alt="">
-            <h3>إجتماع عن الخطيئة والعودة</h3>
-        </div>
-        <div class="card"><img src="meetfeb2.jpeg" alt="">
-            <h3>سهرة حبّ</h3>
-        </div>
-        <div class="card"><img src="meetfeb3.jpeg" alt="">
-            <h3>إجتماع عن الصّوم</h3>
-        </div>
+        <div class="card"><img src="schedulefeb26.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="meetfeb1.jpeg" alt="إجتماع عن الخطيئة والعودة"><h3>إجتماع عن الخطيئة والعودة</h3></div>
+        <div class="card"><img src="meetfeb2.jpeg" alt="سهرة حبّ"><h3>سهرة حبّ</h3></div>
+        <div class="card"><img src="meetfeb3.jpeg" alt="إجتماع عن الصّوم"><h3>إجتماع عن الصّوم</h3></div>
     </div>
 </section>
 
-<!--Mars 2026-->
+<!-- March 2026 -->
 <section class="section">
     <div class="section-title">آذار ٢٠٢٦</div>
     <div class="gallery">
-        <div class="card"><img src="schedulemar26.png" alt="">
-            <h3>برنامج الشّهر</h3>
-        </div>
-        <div class="card"><img src="meetmar1.png" alt="">
-            <h3>ساعة سجود</h3>
-        </div>
-        <div class="card"><img src="meetmar2.jpeg" alt="">
-            <h3>شهادة حياة</h3>
-        </div>
-        <div class="card"><img src="meetmar3.jpeg" alt="">
-            <h3>لقاء مع الأمّهات</h3>
-        </div>
-        <div class="card"><img src="meetmar4.jpeg" alt="">
-            <h3>إجتماع تحضيري للعازار</h3>
-        </div>
-        <div class="card"><img src="meetmar4.jpeg" alt="">
-            <h3>جولة لعازار ٢٠٢٦</h3>
-        </div>
+        <div class="card"><img src="schedulemar26.png" alt="برنامج الشهر"><h3>برنامج الشّهر</h3></div>
+        <div class="card"><img src="meetmar1.png" alt="ساعة سجود"><h3>ساعة سجود</h3></div>
+        <div class="card"><img src="meetmar2.jpeg" alt="شهادة حياة"><h3>شهادة حياة</h3></div>
+        <div class="card"><img src="meetmar3.jpeg" alt="لقاء مع الأمّهات"><h3>لقاء مع الأمّهات</h3></div>
+        <div class="card"><img src="meetmar4.jpeg" alt="جولة لعازار ٢٠٢٦"><h3>جولة لعازار ٢٠٢٦</h3></div>
     </div>
 </section>
+
+<!-- Top Students -->
 <section class="section">
     <div class="section-title">المتفوّقون</div>
     <div class="gallery">
-        <div class="card"><img src="febtop3.jpeg" alt="">
-            <h3>شباط ٢٠٢٦</h3>
-        </div>
-        <div class="card"><img src="martop3.jpeg" alt="">
-            <h3>آذار ٢٠٢٦</h3>
-        </div>
-        <div class="card"><img src="aprtop3.jpeg" alt="">
-            <h3>نيسان ٢٠٢٦</h3>
-        </div>
-        <!--<div class="card"><img src="meetmar1.jpeg" alt="">
-            <h3>إجتماع عن الخطيئة والعودة</h3>
-        </div>
-        <div class="card"><img src="meetmar2.jpeg" alt="">
-            <h3>سهرة حبّ</h3>
-        </div>
-        <div class="card"><img src="meetmar3.jpeg" alt="">
-            <h3>إجتماع عن الصّوم</h3>
-        </div>-->
+        <div class="card"><img src="febtop3.jpeg" alt="شباط ٢٠٢٦"><h3>شباط ٢٠٢٦</h3></div>
+        <div class="card"><img src="martop3.png" alt="آذار ٢٠٢٦"><h3>آذار ٢٠٢٦</h3></div>
+        <div class="card"><img src="aprtop3.jpeg" alt="نيسان ٢٠٢٦"><h3>نيسان ٢٠٢٦</h3></div>
+    </div>
 </section>
 
 <footer>
     <p>© ٢٠٢٦ جميع الحقوق محفوظة - أخوية طلائع العذراء – إهمج</p>
     <div class="footer-links">
-        <a href="index.html">الرئيسية</a>
-        <a href="about.html">من نحن</a>
-        <a href="activities.html">نشاطاتنا</a>
-        <a href="contact.html">مكتبتي</a>
+        <a href="index.html">الرئيسية</a><a href="about.html">من نحن</a><a href="activities.html">نشاطاتنا</a><a href="contact.html">مكتبتي</a>
     </div>
 </footer>
-<script src="script.js"></script>
+
+<script>
+    // ==================== COMPLETE LITURGICAL CALENDAR & SEASONAL PARTICLES ====================
+    (function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+        
+        let liturgicalSeason = 'ordinary';
+        let seasonNameArabic = 'الزمن العادي';
+        let particleType = 'leaf';
+        let particleCount = 55;
+        
+        function getEasterDate(y) {
+            if(y === 2026) return new Date(2026, 3, 5);
+            if(y === 2025) return new Date(2025, 3, 20);
+            if(y === 2027) return new Date(2027, 2, 28);
+            return new Date(y, 2, 31);
+        }
+        
+        const easterDate = getEasterDate(year);
+        const lentStart = new Date(easterDate);
+        lentStart.setDate(easterDate.getDate() - 46);
+        const lentEnd = new Date(easterDate);
+        lentEnd.setDate(easterDate.getDate() - 1);
+        const easterSeasonEnd = new Date(easterDate);
+        easterSeasonEnd.setDate(easterDate.getDate() + 50);
+        
+        const isAdvent = (month === 10 && day >= 30) || (month === 11 && day <= 24);
+        const isChristmas = (month === 11 && day >= 25) || (month === 0 && day <= 13);
+        const isLent = now >= lentStart && now <= lentEnd;
+        const isEasterSeason = now >= easterDate && now <= easterSeasonEnd;
+        
+        if(isChristmas) {
+            liturgicalSeason = 'christmas';
+            seasonNameArabic = 'زمن الميلاد المجيد ✨';
+            particleType = 'star';
+            particleCount = 70;
+        } 
+        else if(isLent) {
+            liturgicalSeason = 'lent';
+            seasonNameArabic = 'زمن الصوم الكبير 🕯️';
+            particleType = 'leaf';
+            particleCount = 45;
+        }
+        else if(isEasterSeason) {
+            liturgicalSeason = 'easter';
+            seasonNameArabic = 'زمن القيامة المجيدة 🌅';
+            particleType = 'petal';
+            particleCount = 85;
+        }
+        else if(isAdvent) {
+            liturgicalSeason = 'advent';
+            seasonNameArabic = 'زمن المجيء (الانتظار) 🕯️';
+            particleType = 'snow';
+            particleCount = 60;
+        }
+        else {
+            const m = month;
+            if(m >= 2 && m <= 4) { particleType = 'petal'; particleCount = 70; seasonNameArabic = 'زمن البهجة – ربيع العذراء'; }
+            else if(m >= 5 && m <= 8) { particleType = 'sun'; particleCount = 40; seasonNameArabic = 'زمن النمو – صيف الخدمة'; }
+            else if(m >= 9 && m <= 10) { particleType = 'leaf'; particleCount = 65; seasonNameArabic = 'زمن العطاء – خريف البركات'; }
+            else { particleType = 'snow'; particleCount = 55; seasonNameArabic = 'زمن الرجاء – شتاء المحبة'; }
+        }
+        
+        document.body.classList.add(liturgicalSeason);
+        const badge = document.getElementById('liturgicalBadge');
+        if(badge) badge.innerHTML = `🕊️ ${seasonNameArabic} 🕊️`;
+        
+        // Enhanced Particles System
+        const container = document.getElementById('season-container');
+        if(container) {
+            container.innerHTML = '';
+            const isMobile = window.innerWidth < 768;
+            let finalCount = isMobile ? Math.floor(particleCount * 0.5) : particleCount;
+            finalCount = Math.min(finalCount, 110);
+            const animationStyle = particleType === 'petal' ? 'gentleDrift' : 'floatFall';
+            
+            for(let i=0; i<finalCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', particleType);
+                
+                let size = 0;
+                if(particleType === 'snow') size = Math.random() * 10 + 5;
+                else if(particleType === 'petal') size = Math.random() * 12 + 7;
+                else if(particleType === 'leaf') size = Math.random() * 14 + 6;
+                else if(particleType === 'sun') size = Math.random() * 8 + 5;
+                else if(particleType === 'star') size = Math.random() * 10 + 8;
+                else size = Math.random() * 8 + 4;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                const duration = Math.random() * 9 + 7;
+                const delay = Math.random() * 8;
+                particle.style.animation = `${animationStyle} ${duration}s linear ${delay}s infinite`;
+                particle.style.top = -Math.random() * 100 + 'vh';
+                
+                if(particleType === 'petal' || particleType === 'leaf') {
+                    particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }
+                container.appendChild(particle);
+            }
+        }
+        
+        // Lightbox Modal Functionality
+        function initLightbox() {
+            if(document.getElementById('imageModal')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'imageModal';
+            modalDiv.className = 'modal';
+            modalDiv.innerHTML = `<span class="close-modal">&times;</span><img class="modal-content" id="modalImage" alt="صورة مكبرة"><div id="modalCaption" class="modal-caption"></div>`;
+            document.body.appendChild(modalDiv);
+            
+            const closeBtn = modalDiv.querySelector('.close-modal');
+            closeBtn.onclick = () => modalDiv.style.display = 'none';
+            modalDiv.onclick = (e) => { if(e.target === modalDiv) modalDiv.style.display = 'none'; };
+            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modalDiv.style.display === 'block') modalDiv.style.display = 'none'; });
+        }
+        
+        function setupClickableImages() {
+            const modal = document.getElementById('imageModal');
+            if(!modal) return;
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            const images = document.querySelectorAll('.card img, .gallery img');
+            
+            images.forEach(img => {
+                img.removeEventListener('click', img._handler);
+                const handler = function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    let txt = this.alt || '';
+                    const parentCard = this.closest('.card');
+                    if(parentCard) {
+                        const title = parentCard.querySelector('h3');
+                        if(title) txt = title.innerText;
+                    }
+                    caption.innerText = txt || 'لحظة جميلة';
+                };
+                img._handler = handler;
+                img.addEventListener('click', handler);
+            });
+        }
+        
+        initLightbox();
+        setupClickableImages();
+        
+        // Active nav state
+        const currentPage = window.location.pathname.split('/').pop() || 'activities.html';
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if(link.getAttribute('href') === currentPage) link.classList.add('active');
+            else link.classList.remove('active');
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const hash = this.getAttribute('href');
+                if(hash === '#') return;
+                const target = document.querySelector(hash);
+                if(target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+            });
+        });
+        
+        // Resize handler to maintain particle density
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            if(resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if(container && container.children.length > 0) {
+                    const existing = container.querySelectorAll('.particle');
+                    existing.forEach(p => p.remove());
+                    const isMobileNow = window.innerWidth < 768;
+                    let newCount = isMobileNow ? Math.floor(particleCount * 0.5) : particleCount;
+                    newCount = Math.min(newCount, 110);
+                    const animStyle = particleType === 'petal' ? 'gentleDrift' : 'floatFall';
+                    
+                    for(let i=0; i<newCount; i++) {
+                        const particle = document.createElement('div');
+                        particle.classList.add('particle', particleType);
+                        let size = particleType === 'snow' ? Math.random() * 10 + 5 : (particleType === 'petal' ? Math.random() * 12 + 7 : (particleType === 'star' ? Math.random() * 10 + 8 : Math.random() * 14 + 6));
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animation = `${animStyle} ${Math.random() * 9 + 7}s linear ${Math.random() * 8}s infinite`;
+                        particle.style.top = -Math.random() * 100 + 'vh';
+                        container.appendChild(particle);
+                    }
+                }
+            }, 200);
+        });
+    })();
+</script>
 </body>
 </html>

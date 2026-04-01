@@ -2,15 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>أخوية طلائع العذراء – إهمج</title>
     <link rel="icon" href="logo.jpg">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== ENHANCED SEASONAL & LITURGICAL THEMES ========== */
+        :root {
+            --liturgical-gold: #E8C85A;
+            --liturgical-violet: #4C2F4B;
+            --liturgical-violet-light: #7D4E7A;
+            --liturgical-white: #FFF9F0;
+            --liturgical-red: #B22234;
+            --liturgical-green: #2C5F2D;
+            --liturgical-rose: #F7C6C6;
+        }
+
+        body.lent {
+            --crimson: #5E2A4A;
+            --crimson-deep: #3B1E31;
+            --gold: #B89A40;
+            --gold-bright: #CDAF5A;
+            --grad-crimson: linear-gradient(135deg, #3B1E31 0%, #5E2A4A 100%);
+        }
+        body.lent .hero { filter: saturate(0.92) sepia(0.08); }
+        
+        body.advent {
+            --crimson: #4C2F4B;
+            --crimson-deep: #2C1C2B;
+            --gold: #C9A84C;
+            --grad-crimson: linear-gradient(135deg, #2C1C2B 0%, #4C2F4B 100%);
+        }
+        
+        body.christmas {
+            --crimson: #9B2E2E;
+            --crimson-deep: #701F1F;
+            --gold: #F5D742;
+            --gold-bright: #FFE98A;
+            --grad-crimson: linear-gradient(135deg, #701F1F 0%, #B43B3B 100%);
+        }
+        body.christmas .hero-text h3 { text-shadow: 0 0 12px rgba(255,215,0,0.6); }
+        
+        body.easter {
+            --crimson: #B3413A;
+            --crimson-deep: #8B2C2C;
+            --gold: #F5E56B;
+            --grad-crimson: linear-gradient(135deg, #A53F3F 0%, #D95C5C 100%);
+        }
+        body.easter .hero::after { content: "✝ ✞ ✟"; font-size: 1.6rem; letter-spacing: 6px; }
+        
+        body.ordinary {
+            --crimson: #2C6E2F;
+            --crimson-deep: #1F4F21;
+            --gold: #C9B36B;
+            --grad-crimson: linear-gradient(135deg, #1F4F21 0%, #2C6E2F 100%);
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            will-change: transform, opacity;
+            filter: blur(0.6px);
+            z-index: 9999;
+        }
+        .particle.snow {
+            background: radial-gradient(circle at 30% 30%, #ffffff, #d4eaff);
+            box-shadow: 0 0 8px rgba(255,255,240,0.8);
+            border-radius: 50%;
+        }
+        .particle.petal {
+            background: linear-gradient(145deg, #FFB7C5, #FF8DA1);
+            border-radius: 150% 0 150% 0;
+            transform: rotate(45deg);
+            opacity: 0.8;
+        }
+        .particle.leaf {
+            background: radial-gradient(ellipse at 40% 40%, #D4783A, #9B4B1A);
+            border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+            opacity: 0.7;
+        }
+        .particle.sun {
+            background: radial-gradient(circle, rgba(255,220,100,0.85), rgba(255,180,50,0.3));
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(255,200,50,0.6);
+        }
+        .particle.star {
+            background: radial-gradient(circle, #FFF5B0, #FFE55C);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            width: 12px !important;
+            height: 12px !important;
+        }
+        @keyframes floatFall {
+            0% { transform: translateY(-15vh) rotate(0deg) translateX(0); opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(30px); opacity: 0; }
+        }
+        @keyframes gentleDrift {
+            0% { transform: translateY(-12vh) rotate(0deg) translateX(0); opacity: 0.85; }
+            100% { transform: translateY(110vh) rotate(520deg) translateX(-25px); opacity: 0; }
+        }
+        
+        .liturgical-badge {
+            position: fixed;
+            top: 70px;
+            left: 15px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: var(--gold-bright, #E8C85A);
+            font-weight: 600;
+            z-index: 1001;
+            border-right: 2px solid var(--gold, #C9A84C);
+            font-family: 'Amiri', serif;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .liturgical-badge { top: 115px; left: 8px; font-size: 0.65rem; padding: 0.2rem 0.7rem; }
+        }
+        
+        body.lent .hero::before {
+            content: "✟";
+            position: absolute;
+            bottom: 15%;
+            left: 7%;
+            font-size: 4rem;
+            opacity: 0.1;
+            color: var(--gold);
+            font-family: serif;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-
-<div id="season-container"></div>
+<div id="season-container" class="season-particles"></div>
 
 <nav>
     <div class="logo">
@@ -22,15 +149,15 @@
         <li><a href="index.html" class="active">الرئيسية</a></li>
         <li><a href="about.html">من نحن</a></li>
         <li><a href="activities.html">نشاطاتنا</a></li>
-        <li><a href="contact.html">تواصل معنا</a></li>
+        <li><a href="contact.html">مكتبتي</a></li>
     </ul>
 </nav>
 
 <div class="hero">
     <div class="hero-text">
         <h2>طلائع رعيّة سيّدة الشّير، إهمج</h2>
-        <h3>إفتح... إنّه يقرع!!</h3>
-        <p>الإجتماع نهار الخميس السّاعة ٦ مساءً</p>
+        <h3 id="seasonGreeting">إفتح... إنّه يقرع!!</h3>
+        <p>الإجتماع نهار الجمعة الساعة ٦ مساءًٍ</p>
         <div class="hero-buttons">
             <a href="about.html" class="btn btn-primary">تعرف علينا</a>
             <a href="activities.html" class="btn btn-secondary">نشاطاتنا</a>
@@ -45,113 +172,40 @@
         أهلاً بكم في الموقع الرسمي لطلائع رعيّة سيّدة الشّير – إهمج.
         هنا تجدون نشاطاتنا، رسالتنا، وكل ما يخصّ حركتنا.
     </p>
-    
     <div class="stats-container">
-        <div class="stat-box">
-            <div class="stat-number">+٥٠</div>
-            <div class="stat-label">عضو</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number">+٣٩</div>
-            <div class="stat-label">سنوات عطاء</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number">+٣٠</div>
-            <div class="stat-label">إجتماع ونشاط</div>
-        </div>
+        <div class="stat-box"><div class="stat-number">+٥٠</div><div class="stat-label">عضو</div></div>
+        <div class="stat-box"><div class="stat-number">+٣٩</div><div class="stat-label">سنوات عطاء</div></div>
+        <div class="stat-box"><div class="stat-number">+٣٠</div><div class="stat-label">إجتماع ونشاط</div></div>
     </div>
 </section>
 
-<!-- Photo Gallery Section -->
 <section class="section">
     <div class="section-title">لحظات من نشاطاتنا</div>
     <div class="gallery featured-gallery">
-        <div class="card featured-card">
-            <img src="rehle.jpeg" alt="رحلة">
-            <div class="card-overlay">
-                <h3>رحلة ٢٠٢٥</h3>
-                <p>رحلة ترفيهية</p>
-            </div>
-        </div>
-        <div class="card featured-card">
-            <img src="kermes25.jpeg" alt="كرمس">
-            <div class="card-overlay">
-                <h3>كرمس ٢٠٢٥</h3>
-                <p>فرح ومرح للجميع</p>
-            </div>
-        </div>
-        <div class="card featured-card">
-            <img src="campnoel.jpeg" alt="مخيم ميلاد">
-            <div class="card-overlay">
-                <h3>مخيم ميلاد ٢٠٢٥</h3>
-                <p>استقبال الميلاد معاً</p>
-            </div>
-        </div>
-        <div class="card featured-card">
-            <img src="tekris2025.jpeg" alt="تكريس">
-            <div class="card-overlay">
-                <h3>تكريس أعضاء جدد</h3>
-                <p>انضمام أعضاء جدد للعائلة</p>
-            </div>
-        </div>
+        <div class="card featured-card"><img src="rehle.jpeg" alt="رحلة"><div class="card-overlay"><h3>رحلة ٢٠٢٥</h3><p>رحلة ترفيهية</p></div></div>
+        <div class="card featured-card"><img src="kermes25.jpeg" alt="كرمس"><div class="card-overlay"><h3>كرمس ٢٠٢٥</h3><p>فرح ومرح للجميع</p></div></div>
+        <div class="card featured-card"><img src="campnoel.jpeg" alt="مخيم ميلاد"><div class="card-overlay"><h3>مخيم ميلاد ٢٠٢٥</h3><p>استقبال الميلاد معاً</p></div></div>
+        <div class="card featured-card"><img src="tekris2025.jpeg" alt="تكريس"><div class="card-overlay"><h3>تكريس أعضاء جدد</h3><p>انضمام أعضاء جدد للعائلة</p></div></div>
     </div>
-    <div class="center-text" style="margin-top: 2rem;">
-        <a href="activities.html" class="btn btn-primary">شاهد المزيد من النشاطات</a>
-    </div>
+    <div class="center-text" style="margin-top: 2rem;"><a href="activities.html" class="btn btn-primary">شاهد المزيد من النشاطات</a></div>
 </section>
 
-<!-- Quick Actions Section -->
 <section class="section quick-actions">
     <div class="section-title">روابط سريعة</div>
     <div class="actions-grid">
-        <a href="about.html" class="action-card">
-            <div class="action-icon">📖</div>
-            <h3>من نحن</h3>
-            <p>تعرف على تاريخنا ورسالتنا</p>
-        </a>
-        <a href="activities.html" class="action-card">
-            <div class="action-icon">📅</div>
-            <h3>النشاطات القادمة</h3>
-            <p>جدول النشاطات واللقاءات</p>
-        </a>
-        <a href="contact.html#library" class="action-card">
-            <div class="action-icon">📚</div>
-            <h3>مكتبة الطلائعي</h3>
-            <p>صلاة الطلائع والقيود</p>
-        </a>
-        <a href="contact.html#social" class="action-card">
-            <div class="action-icon">🌐</div>
-            <h3>تواصل معنا</h3>
-            <p>صفحاتنا على التواصل الاجتماعي</p>
-        </a>
+        <a href="about.html" class="action-card"><div class="action-icon">📖</div><h3>من نحن</h3><p>تعرف على تاريخنا ورسالتنا</p></a>
+        <a href="activities.html" class="action-card"><div class="action-icon">📅</div><h3>النشاطات القادمة</h3><p>جدول النشاطات واللقاءات</p></a>
+        <a href="contact.html#library" class="action-card"><div class="action-icon">📚</div><h3>مكتبة الطلائعي</h3><p>صلاة الطلائع والقيود</p></a>
+        <a href="contact.html#social" class="action-card"><div class="action-icon">🌐</div><h3>تواصل معنا</h3><p>صفحاتنا على التواصل الاجتماعي</p></a>
     </div>
 </section>
 
-<!-- Upcoming Events Preview -->
 <section class="section">
     <div class="section-title">نشاطات قادمة</div>
+    <div class="events-preview">
         <div class="event-item">
-            <div class="event-date">
-                <span class="event-day">٢٨</span>
-                <span class="event-month">آذار</span>
-            </div>
-            <div class="event-details">
-                <h4>سبت لعازار</h4>
-                <p>جولة في أحياء إهمج</p>
-                <span class="event-time">ما قبل الظّهر</span>
-            </div>
-            <a href="activities.html" class="btn-small">التفاصيل</a>
-        </div>
-        <div class="event-item">
-            <div class="event-date">
-                <span class="event-day">٢</span>
-                <span class="event-month">نيسان</span>
-            </div>
-            <div class="event-details">
-                <h4>زيارة ٧ كنائس</h4>
-                <p>مسيرة صلاة في كنائس إهمج</p>
-                <span class="event-time">ما قبل الظّهر</span>
-            </div>
+            <div class="event-date"><span class="event-day">٢</span><span class="event-month">نيسان</span></div>
+            <div class="event-details"><h4>زيارة ٧ كنائس</h4><p>مسيرة صلاة في كنائس إهمج</p><span class="event-time">ما قبل الظّهر</span></div>
             <a href="activities.html" class="btn-small">التفاصيل</a>
         </div>
     </div>
@@ -160,12 +214,182 @@
 <footer>
     <p>© ٢٠٢٦ جميع الحقوق محفوظة - أخوية طلائع العذراء – إهمج</p>
     <div class="footer-links">
-        <a href="index.html">الرئيسية</a>
-        <a href="about.html">من نحن</a>
-        <a href="activities.html">نشاطاتنا</a>
-        <a href="contact.html">مكتبتي</a>
+        <a href="index.html">الرئيسية</a><a href="about.html">من نحن</a><a href="activities.html">نشاطاتنا</a><a href="contact.html">مكتبتي</a>
     </div>
 </footer>
-<script src="script.js"></script>
+
+<script>
+    // ==================== COMPLETE LITURGICAL CALENDAR & SEASONAL PARTICLES ====================
+    (function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+        
+        let liturgicalSeason = 'ordinary';
+        let seasonNameArabic = 'الزمن العادي';
+        let particleType = 'leaf';
+        let particleCount = 55;
+        let customGreeting = '';
+        
+        function getEasterDate(y) {
+            if(y === 2026) return new Date(2026, 3, 5);
+            if(y === 2025) return new Date(2025, 3, 20);
+            if(y === 2027) return new Date(2027, 2, 28);
+            return new Date(y, 2, 31);
+        }
+        
+        const easterDate = getEasterDate(year);
+        const lentStart = new Date(easterDate);
+        lentStart.setDate(easterDate.getDate() - 46);
+        const lentEnd = new Date(easterDate);
+        lentEnd.setDate(easterDate.getDate() - 1);
+        const easterSeasonEnd = new Date(easterDate);
+        easterSeasonEnd.setDate(easterDate.getDate() + 50);
+        
+        const isAdvent = (month === 10 && day >= 30) || (month === 11 && day <= 24);
+        const isChristmas = (month === 11 && day >= 25) || (month === 0 && day <= 13);
+        const isLent = now >= lentStart && now <= lentEnd;
+        const isEasterSeason = now >= easterDate && now <= easterSeasonEnd;
+        const isEaster = now.toDateString() === easterDate.toDateString();
+        
+        if(isChristmas) {
+            liturgicalSeason = 'christmas';
+            seasonNameArabic = 'زمن الميلاد المجيد ✨';
+            particleType = 'star';
+            particleCount = 70;
+            customGreeting = 'المجد لله في الأعالي! الميلاد نور العالم 🌟';
+        } 
+        else if(isLent) {
+            liturgicalSeason = 'lent';
+            seasonNameArabic = 'زمن الصوم الكبير 🕯️';
+            particleType = 'leaf';
+            particleCount = 45;
+            customGreeting = 'ارفعوا قلوبكم.. الصوم طريق التوبة والصلاة';
+        }
+        else if(isEaster || isEasterSeason) {
+            liturgicalSeason = 'easter';
+            seasonNameArabic = 'زمن القيامة المجيدة 🌅';
+            particleType = 'petal';
+            particleCount = 85;
+            customGreeting = 'المسيح قام! حقاً قام! نور القيامة يملأ قلوبنا';
+        }
+        else if(isAdvent) {
+            liturgicalSeason = 'advent';
+            seasonNameArabic = 'زمن المجيء (الانتظار) 🕯️';
+            particleType = 'snow';
+            particleCount = 60;
+            customGreeting = 'أعدّوا طريق الربّ.. انتظار مخلص العالم';
+        }
+        else {
+            const naturalSeason = (() => {
+                const m = month;
+                if(m >= 2 && m <= 4) return 'spring';
+                if(m >= 5 && m <= 8) return 'summer';
+                if(m >= 9 && m <= 10) return 'autumn';
+                return 'winter';
+            })();
+            liturgicalSeason = 'ordinary';
+            seasonNameArabic = naturalSeason === 'spring' ? 'زمن البهجة – ربيع العذراء' : (naturalSeason === 'summer' ? 'زمن النمو – صيف الخدمة' : (naturalSeason === 'autumn' ? 'زمن العطاء – خريف البركات' : 'زمن الرجاء – شتاء المحبة'));
+            if(naturalSeason === 'spring') { particleType = 'petal'; particleCount = 70; }
+            else if(naturalSeason === 'summer') { particleType = 'sun'; particleCount = 40; }
+            else if(naturalSeason === 'autumn') { particleType = 'leaf'; particleCount = 65; }
+            else { particleType = 'snow'; particleCount = 55; }
+            customGreeting = 'كلّ زمان هو نعمة.. نعمة الله تغمرنا';
+        }
+        
+        document.body.classList.add(liturgicalSeason);
+        const badge = document.getElementById('liturgicalBadge');
+        if(badge) badge.innerHTML = `🕊️ ${seasonNameArabic} 🕊️`;
+        
+        const greetingSpan = document.getElementById('seasonGreeting');
+        if(greetingSpan && customGreeting) greetingSpan.innerHTML = customGreeting;
+        
+        // Enhanced Particles System
+        const container = document.getElementById('season-container');
+        if(container) {
+            container.innerHTML = '';
+            const isMobile = window.innerWidth < 768;
+            let finalCount = isMobile ? Math.floor(particleCount * 0.5) : particleCount;
+            finalCount = Math.min(finalCount, 110);
+            
+            let animationStyle = particleType === 'petal' ? 'gentleDrift' : 'floatFall';
+            
+            for(let i=0; i<finalCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle', particleType);
+                
+                let size = 0;
+                if(particleType === 'snow') size = Math.random() * 10 + 5;
+                else if(particleType === 'petal') size = Math.random() * 12 + 7;
+                else if(particleType === 'leaf') size = Math.random() * 14 + 6;
+                else if(particleType === 'sun') size = Math.random() * 8 + 5;
+                else if(particleType === 'star') size = Math.random() * 10 + 8;
+                else size = Math.random() * 8 + 4;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                const duration = Math.random() * 9 + 7;
+                const delay = Math.random() * 8;
+                particle.style.animation = `${animationStyle} ${duration}s linear ${delay}s infinite`;
+                particle.style.top = -Math.random() * 100 + 'vh';
+                
+                if(particleType === 'petal' || particleType === 'leaf') {
+                    particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }
+                container.appendChild(particle);
+            }
+        }
+        
+        // Lightbox functionality
+        function initLightbox() {
+            if(document.getElementById('imageModal')) return;
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'imageModal';
+            modalDiv.className = 'modal';
+            modalDiv.innerHTML = `<span class="close-modal">&times;</span><img class="modal-content" id="modalImage" alt="صورة مكبرة"><div id="modalCaption" class="modal-caption"></div>`;
+            document.body.appendChild(modalDiv);
+            const closeBtn = modalDiv.querySelector('.close-modal');
+            closeBtn.onclick = () => modalDiv.style.display = 'none';
+            modalDiv.onclick = (e) => { if(e.target === modalDiv) modalDiv.style.display = 'none'; };
+            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modalDiv.style.display === 'block') modalDiv.style.display = 'none'; });
+        }
+        
+        function setupClickableImages() {
+            const modal = document.getElementById('imageModal');
+            if(!modal) return;
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            const images = document.querySelectorAll('.card img, .member-image img, .library-card img, .featured-card img, .gallery img, .about-image img');
+            images.forEach(img => {
+                img.removeEventListener('click', img._handler);
+                const handler = function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    let txt = this.alt || '';
+                    const parentCard = this.closest('.card');
+                    if(parentCard) {
+                        const title = parentCard.querySelector('h3, h4');
+                        if(title) txt = title.innerText;
+                    }
+                    caption.innerText = txt || 'لحظة جميلة';
+                };
+                img._handler = handler;
+                img.addEventListener('click', handler);
+            });
+        }
+        
+        initLightbox();
+        setupClickableImages();
+        
+        // Active nav state
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if(link.getAttribute('href') === currentPage) link.classList.add('active');
+            else link.classList.remove('active');
+        });
+    })();
+</script>
 </body>
 </html>
