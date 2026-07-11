@@ -1,3 +1,3 @@
 var API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000'
-  : 'https://tala2e3-ehmej.onrender.com';
+  : 'https://tala2e3-ehmej-1.onrender.com';
