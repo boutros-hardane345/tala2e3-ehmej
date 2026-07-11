@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>لوحة التحكم - طلائع إهمج</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { background: var(--ivory); }
+        .dash-container { max-width: 1200px; margin: 0 auto; padding: 2rem 5%; }
+        .dash-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .dash-header h1 {
+            font-family: var(--font-display); color: var(--crimson-deep); font-size: 1.8rem;
+            position: relative; display: inline-block;
+        }
+        .dash-header h1::before {
+            content: '✦'; position: absolute; right: -1.8rem; top: 50%;
+            transform: translateY(-50%); font-size: 0.8rem; color: var(--gold);
+        }
+        .dash-header .logout-btn {
+            background: var(--crimson); color: white; border: none;
+            padding: 0.5rem 1.2rem; border-radius: 10px; cursor: pointer;
+            font-weight: 600; font-family: var(--font-primary);
+            transition: var(--transition-fast); letter-spacing: 0.3px;
+            box-shadow: 0 4px 12px rgba(122,0,0,0.25);
+        }
+        .dash-header .logout-btn:hover {
+            background: var(--crimson-deep); transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(122,0,0,0.35);
+        }
+        .tab-nav {
+            display: flex; gap: 0.3rem; margin-bottom: 1.5rem;
+            background: var(--white); border-radius: 14px; padding: 0.3rem;
+            box-shadow: var(--shadow-sm); width: fit-content; flex-wrap: wrap;
+            border: 1px solid var(--gray-200);
+        }
+        .tab-btn {
+            padding: 0.6rem 1.5rem; border-radius: 10px; border: none;
+            background: transparent; color: var(--text-mid); font-size: 0.9rem;
+            font-weight: 600; cursor: pointer; font-family: var(--font-primary);
+            transition: var(--transition-fast); position: relative;
+        }
+        .tab-btn.active { background: var(--crimson); color: white; box-shadow: 0 4px 14px rgba(122,0,0,0.3); }
+        .tab-btn:hover:not(.active) { background: var(--gray-100); color: var(--crimson); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s var(--ease-out); }
+        .dash-card {
+            background: var(--white); border-radius: 18px; padding: 1.5rem;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem; position: relative; overflow: hidden;
+            transition: var(--transition);
+        }
+        .dash-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; background: var(--grad-gold);
+            transform: scaleX(0); transition: transform 0.4s var(--ease-out);
+            transform-origin: right;
+        }
+        .dash-card:hover { box-shadow: var(--shadow-md); }
+        .dash-card:hover::before { transform: scaleX(1); }
+        .dash-card h3 {
+            font-family: var(--font-display); color: var(--crimson-deep);
+            margin-bottom: 1rem; font-size: 1.3rem; position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .dash-card h3::after {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 40px; height: 2px; background: var(--grad-gold); border-radius: 2px;
+        }
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+        .form-row.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .form-row.full { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .form-group label {
+            font-size: 0.8rem; font-weight: 600; color: var(--text-mid);
+            letter-spacing: 0.2px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.6rem 0.8rem; border-radius: 10px; border: 1px solid var(--gray-300);
+            font-family: var(--font-primary); font-size: 0.9rem;
+            outline: none; transition: var(--transition-fast);
+            background: var(--ivory);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(122,0,0,0.08);
+            background: var(--white);
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .dash-btn {
+            padding: 0.5rem 1.2rem; border-radius: 10px; border: none;
+            font-weight: 700; cursor: pointer; font-family: var(--font-primary);
+            transition: var(--transition); font-size: 0.9rem;
+            letter-spacing: 0.3px; display: inline-block; line-height: 1.4;
+        }
+        .dash-btn.primary {
+            background: var(--crimson); color: white;
+            box-shadow: 0 4px 14px rgba(122,0,0,0.3);
+        }
+        .dash-btn.primary:hover { background: var(--crimson-deep); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(122,0,0,0.4); }
+        .dash-btn.secondary {
+            background: var(--grad-gold); color: var(--ink);
+            box-shadow: 0 4px 12px rgba(201,168,76,0.25);
+        }
+        .dash-btn.secondary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(201,168,76,0.35); }
+        .dash-btn.danger { background: #b22234; color: white; box-shadow: 0 4px 12px rgba(178,34,52,0.3); }
+        .dash-btn.danger:hover { background: #8b1a1a; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(139,26,26,0.4); }
+        .dash-btn.success { background: #2a6e2f; color: white; box-shadow: 0 4px 12px rgba(42,110,47,0.3); }
+        .dash-btn.success:hover { background: #1f5423; transform: translateY(-2px); }
+        .frm-actions { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+        .events-grid { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
+        .event-dash-card {
+            background: var(--white); border-radius: 14px; padding: 1rem;
+            border: 1px solid var(--gray-200); border-right: 4px solid var(--crimson);
+            transition: var(--transition);
+        }
+        .event-dash-card:hover {
+            transform: translateX(-6px); box-shadow: var(--shadow-md);
+            border-right-color: var(--gold);
+        }
+        .event-dash-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .event-dash-header strong { color: var(--crimson-deep); font-size: 1rem; font-family: var(--font-primary); }
+        .event-type-tag {
+            font-size: 0.7rem; padding: 0.15rem 0.7rem; border-radius: 20px; font-weight: 600;
+        }
+        .event-type-tag.upcoming { background: #dbb0b0; color: #2d1515; }
+        .event-type-tag.past_activity { background: var(--gray-200); color: var(--text-mid); }
+        .event-dash-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-light); flex-wrap: wrap; }
+        .event-dash-desc { font-size: 0.85rem; color: var(--text-mid); margin: 0.4rem 0; }
+        .event-dash-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+        .event-dash-actions .dash-btn { font-size: 0.8rem; padding: 0.3rem 0.9rem; }
+        .badge-yes { background: linear-gradient(135deg, #2a6e2f, #3a8e3f); color: white; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-no { background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; padding: 0.1rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .loading-text, .empty-text { text-align: center; color: var(--text-light); padding: 2rem; font-size: 0.95rem; }
+        .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--gray-200); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th {
+            text-align: right; padding: 0.8rem 0.7rem;
+            background: linear-gradient(135deg, var(--gray-100), var(--ivory-warm));
+            color: var(--crimson-deep); font-weight: 700;
+            border-bottom: 2px solid var(--gold); white-space: nowrap;
+            font-family: var(--font-primary);
+        }
+        td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+        tr:hover td { background: var(--ivory-warm); }
+        tr:last-child td { border-bottom: none; }
+        .refresh-btn {
+            background: transparent; border: 1px solid var(--gray-300);
+            padding: 0.35rem 0.9rem; border-radius: 8px; cursor: pointer;
+            font-size: 0.8rem; color: var(--text-mid); font-weight: 600;
+            font-family: var(--font-primary); transition: var(--transition-fast);
+        }
+        .refresh-btn:hover {
+            background: var(--crimson); color: white; border-color: var(--crimson);
+            transform: translateY(-2px);
+        }
+        .header-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .committee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .committee-card {
+            background: var(--white); border-radius: 14px; padding: 1rem;
+            border: 1px solid var(--gray-200); border-right: 4px solid var(--gold);
+            display: flex; flex-direction: column; gap: 0.5rem;
+            transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .committee-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; background: var(--grad-crimson);
+            transform: scaleX(0); transition: transform 0.4s var(--ease-out);
+            transform-origin: right;
+        }
+        .committee-card:hover {
+            transform: translateY(-6px); box-shadow: var(--shadow-md);
+            border-color: rgba(201,168,76,0.35);
+        }
+        .committee-card:hover::before { transform: scaleX(1); }
+        .committee-card .c-name { font-weight: 700; color: var(--crimson-deep); font-size: 1rem; font-family: var(--font-display); }
+        .committee-card .c-role { font-size: 0.8rem; color: var(--gold); font-weight: 700; }
+        .committee-card .c-info { font-size: 0.8rem; color: var(--text-light); line-height: 1.6; }
+        .committee-card .c-actions { display: flex; gap: 0.5rem; margin-top: 0.3rem; }
+        .inline-flex { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .search-box {
+            padding: 0.5rem 0.8rem; border-radius: 10px; border: 1px solid var(--gray-300);
+            font-family: var(--font-primary); font-size: 0.85rem; flex: 1;
+            min-width: 150px; outline: none; transition: var(--transition-fast);
+            background: var(--white);
+        }
+        .search-box:focus { border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(122,0,0,0.08); }
+        .success-msg {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #155724;
+            padding: 0.6rem 1rem; border-radius: 12px; margin-bottom: 1rem;
+            display: none; font-weight: 600; border: 1px solid #b8d4c0;
+            box-shadow: 0 4px 12px rgba(21,87,36,0.1);
+        }
+        .success-msg.show { display: block; animation: fadeIn 0.3s var(--ease-out); }
+        .photo-preview-frame {
+            border-radius: 12px; overflow: hidden; max-width: 120px;
+            border: 2px solid var(--gold-pale); box-shadow: var(--shadow-sm);
+        }
+        @media (max-width: 768px) {
+            .form-row, .form-row.three, .form-row.four { grid-template-columns: 1fr; }
+            .dash-header h1 { font-size: 1.3rem; }
+            .dash-header h1::before { display: none; }
+            .tab-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; }
+            .dash-card h3 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <img src="images/logo.jpg" alt="Logo">
+        <img src="images/chi3ar2026.png" alt="Chi3ar">
+    </div>
+    <h1>أخوية طلائع العذراء – إهمج</h1>
+    <ul class="nav-links">
+        <li><a href="index.html">الرئيسية</a></li>
+        <li><a href="about.html">من نحن</a></li>
+        <li><a href="activities.html">نشاطاتنا</a></li>
+        <li><a href="contact.html">مكتبتي</a></li>
+        <li><a href="dashboard.html" class="active">⚙️</a></li>
+    </ul>
+</nav>
+
+<div class="dash-container">
+    <div class="dash-header">
+        <h1>⚙️ لوحة التحكم</h1>
+        <div class="header-actions">
+            <button class="logout-btn" onclick="localStorage.removeItem('tala2e3_token');window.location.href='login.html';">🔒 خروج</button>
+        </div>
+    </div>
+
+    <div class="success-msg" id="successMsg"></div>
+
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="events">📅 اللقاءات القادمة</button>
+        <button class="tab-btn" data-tab="committee">👑 أعضاء العمدة</button>
+        <button class="tab-btn" data-tab="members">👥 جميع الأعضاء</button>
+        <button class="tab-btn" data-tab="monthly">📅 النشاطات الشهرية</button>
+    </div>
+
+    <!-- ========== EVENTS TAB ========== -->
+    <div class="tab-content active" id="tab-events">
+        <div class="dash-card">
+            <h3 id="eventFormTitle">➕ إضافة لقاء جديد</h3>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <input type="text" id="eventTitle" placeholder="مثال: لقاء شهر آب" />
+                </div>
+            </div>
+            <div class="form-row three">
+                <div class="form-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="eventDate" />
+                </div>
+                <div class="form-group">
+                    <label>الوقت</label>
+                    <input type="text" id="eventTime" placeholder="مثال: ٦:٠٠ مساءً" />
+                </div>
+                <div class="form-group">
+                    <label>رابط صورة (اختياري)</label>
+                    <input type="text" id="eventImageUrl" placeholder="https://..." />
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="eventDesc" placeholder="وصف اللقاء..."></textarea>
+                </div>
+            </div>
+            <div class="frm-actions">
+                <button class="dash-btn primary" id="saveEventBtn">➕ إضافة لقاء</button>
+                <button class="dash-btn secondary" id="cancelEventBtn" style="display:none;">❌ إلغاء</button>
+                <button class="refresh-btn" id="refreshEvents">🔄 تحديث</button>
+            </div>
+        </div>
+        <div class="dash-card">
+            <h3>جميع اللقاءات</h3>
+            <div class="events-grid" id="eventsGrid">
+                <p class="loading-text">جاري التحميل...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== COMMITTEE TAB ========== -->
+    <div class="tab-content" id="tab-committee">
+        <div class="dash-card">
+            <div class="inline-flex" style="justify-content:space-between;width:100%;flex-wrap:wrap;">
+                <h3>👑 أعضاء العمدة الحاليين</h3>
+                <button class="refresh-btn" id="refreshCommittee">🔄 تحديث</button>
+            </div>
+            <div class="committee-grid" id="committeeGrid">
+                <p class="loading-text">جاري التحميل...</p>
+            </div>
+        </div>
+        <div class="dash-card">
+            <h3>➕ إضافة عضو إلى العمدة</h3>
+            <p style="color:var(--text-light);font-size:0.85rem;margin-bottom:1rem;">اختر عضواً لتعيينه في العمدة</p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>اختر العضو</label>
+                    <select id="committeeMemberSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="committeeRoleSelect">
+                        <option value="رئيس">رئيس</option>
+                        <option value="نائب الرئيس">نائب الرئيس</option>
+                        <option value="أمين السر">أمين السر</option>
+                        <option value="أمين الصندوق">أمين الصندوق</option>
+                        <option value="وكيل التنشئة">وكيل التنشئة</option>
+                        <option value="وكيل الرسالة">وكيل الرسالة</option>
+                        <option value="وكيل الإعلام">وكيل الإعلام</option>
+                        <option value="وكيل النشاطات">وكيل النشاطات</option>
+                        <option value="مستشار">مستشار</option>
+                    </select>
+                </div>
+            </div>
+            <div class="frm-actions">
+                <button class="dash-btn primary" id="assignCommitteeBtn">➕ تعيين كعضو عمدة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ALL MEMBERS TAB ========== -->
+    <div class="tab-content" id="tab-members">
+        <div class="dash-card">
+            <h3 id="memberFormTitle">➕ إضافة عضو جديد</h3>
+            <div class="form-row four">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="mFullName" placeholder="الاسم الكامل" />
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الميلاد</label>
+                    <input type="date" id="mDob" />
+                </div>
+                <div class="form-group">
+                    <label>فصيلة الدم</label>
+                    <select id="mBloodType">
+                        <option value="A+">A+</option><option value="A-">A-</option>
+                        <option value="B+">B+</option><option value="B-">B-</option>
+                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        <option value="O+">O+</option><option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="mRole">
+                        <option value="عضو">عضو</option>
+                        <option value="رئيس">رئيس</option>
+                        <option value="نائب الرئيس">نائب الرئيس</option>
+                        <option value="أمين السر">أمين السر</option>
+                        <option value="أمين الصندوق">أمين الصندوق</option>
+                        <option value="وكيل التنشئة">وكيل التنشئة</option>
+                        <option value="وكيل الرسالة">وكيل الرسالة</option>
+                        <option value="وكيل الإعلام">وكيل الإعلام</option>
+                        <option value="وكيل النشاطات">وكيل النشاطات</option>
+                        <option value="مستشار">مستشار</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>صورة العضو</label>
+                    <input type="file" id="mPhotoFile" accept="image/*" />
+                    <div id="photoPreview" class="photo-preview-frame" style="display:none;">
+                        <img id="photoPreviewImg" src="" style="width:100%;display:block;" />
+                    </div>
+                    <input type="hidden" id="mPhotoUrl" />
+                </div>
+            </div>
+            <div class="form-row three">
+                <div class="form-group">
+                    <label>مكرّس (نذر)</label>
+                    <select id="mPromise">
+                        <option value="نعم">نعم</option>
+                        <option value="لا">لا</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الزي الرسمي</label>
+                    <select id="mCostume">
+                        <option value="نعم">نعم</option>
+                        <option value="لا">لا</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الالتزام</label>
+                    <select id="mCommitment">
+                        <option value="عالٍ">عالٍ</option>
+                        <option value="متوسط">متوسط</option>
+                        <option value="منخفض">منخفض</option>
+                    </select>
+                </div>
+            </div>
+            <div class="frm-actions">
+                <button class="dash-btn primary" id="saveMemberBtn">➕ إضافة عضو</button>
+                <button class="dash-btn secondary" id="cancelMemberBtn" style="display:none;">❌ إلغاء</button>
+                <input type="hidden" id="editMemberId" />
+            </div>
+        </div>
+        <div class="dash-card">
+            <div class="inline-flex" style="justify-content:space-between;width:100%;flex-wrap:wrap;">
+                <h3>👥 قائمة الأعضاء</h3>
+                <div class="inline-flex">
+                    <input type="text" class="search-box" id="memberSearch" placeholder="بحث..." />
+                    <button class="refresh-btn" id="refreshMembers">🔄 تحديث</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الدور</th>
+                            <th>العمر</th>
+                            <th>فصيلة الدم</th>
+                            <th>مكرّس</th>
+                            <th>الالتزام</th>
+                            <th>صورة</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersBody">
+                        <tr><td colspan="9">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MONTHLY ACTIVITIES TAB ========== -->
+    <div class="tab-content" id="tab-monthly">
+        <div class="dash-card">
+            <h3 id="monthlyFormTitle">➕ إضافة نشاط شهري</h3>
+            <div class="form-row three">
+                <div class="form-group">
+                    <label>السنة</label>
+                    <input type="number" id="maYear" value="2026" />
+                </div>
+                <div class="form-group">
+                    <label>الشهر</label>
+                    <select id="maMonth">
+                        <option value="01">كانون الثاني</option>
+                        <option value="02">شباط</option>
+                        <option value="03">آذار</option>
+                        <option value="04">نيسان</option>
+                        <option value="05">أيار</option>
+                        <option value="06">حزيران</option>
+                        <option value="07">تموز</option>
+                        <option value="08">آب</option>
+                        <option value="09">أيلول</option>
+                        <option value="10">تشرين الأول</option>
+                        <option value="11">تشرين الثاني</option>
+                        <option value="12">كانون الأول</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>صورة البرنامج (الجدول)</label>
+                    <input type="file" id="maScheduleImage" accept="image/*" />
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>اللقاءات (عنوان + صورة)</label>
+                    <div id="meetingsContainer">
+                        <div class="inline-flex" style="gap:0.5rem;margin-bottom:0.5rem;">
+                            <input type="text" class="meeting-title" placeholder="عنوان اللقاء" style="flex:1;padding:0.5rem;border-radius:8px;border:1px solid var(--gray-300);font-family:'Cairo',sans-serif;" />
+                            <input type="file" class="meeting-photo" accept="image/*" style="font-size:0.8rem;" />
+                            <button class="dash-btn danger remove-meeting" style="padding:0.3rem 0.7rem;">✕</button>
+                        </div>
+                    </div>
+                    <button class="dash-btn secondary" id="addMeetingBtn" style="margin-top:0.5rem;">➕ إضافة لقاء</button>
+                </div>
+            </div>
+            <div class="frm-actions">
+                <button class="dash-btn primary" id="saveMonthlyBtn">💾 حفظ النشاط الشهري</button>
+                <button class="dash-btn secondary" id="cancelMonthlyBtn" style="display:none;">❌ إلغاء</button>
+                <button class="refresh-btn" id="refreshMonthly">🔄 تحديث</button>
+            </div>
+        </div>
+        <div class="dash-card">
+            <h3>📅 جميع النشاطات الشهرية</h3>
+            <div id="monthlyList">
+                <p class="loading-text">جاري التحميل...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© ٢٠٢٦ جميع الحقوق محفوظة - أخوية طلائع العذراء – إهمج</p>
+    <div class="footer-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="about.html">من نحن</a>
+        <a href="activities.html">نشاطاتنا</a>
+        <a href="contact.html">مكتبتي</a>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/events.js"></script>
+<script src="js/members.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [{ "src": "**/*", "use": "@vercel/static" }],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "https://tala2e3-api.onrender.com/api/$1" },
+    { "src": "/uploads/(.*)", "dest": "https://tala2e3-api.onrender.com/uploads/$1" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
