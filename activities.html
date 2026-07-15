@@ -352,27 +352,22 @@
         }
         
         function setupClickableImages() {
-            const modal = document.getElementById('imageModal');
-            if(!modal) return;
-            const modalImg = document.getElementById('modalImage');
-            const caption = document.getElementById('modalCaption');
-            const images = document.querySelectorAll('.card img, .gallery img');
-            
-            images.forEach(img => {
-                img.removeEventListener('click', img._handler);
-                const handler = function() {
-                    modal.style.display = 'block';
-                    modalImg.src = this.src;
-                    let txt = this.alt || '';
-                    const parentCard = this.closest('.card');
-                    if(parentCard) {
-                        const title = parentCard.querySelector('h3');
-                        if(title) txt = title.innerText;
-                    }
-                    caption.innerText = txt || 'لحظة جميلة';
-                };
-                img._handler = handler;
-                img.addEventListener('click', handler);
+            document.addEventListener('click', function(e) {
+                const img = e.target.closest('.card img');
+                if (!img) return;
+                const modal = document.getElementById('imageModal');
+                if(!modal) return;
+                const modalImg = document.getElementById('modalImage');
+                const caption = document.getElementById('modalCaption');
+                modal.style.display = 'block';
+                modalImg.src = img.src;
+                let txt = img.alt || '';
+                const parentCard = img.closest('.card');
+                if(parentCard) {
+                    const title = parentCard.querySelector('h3');
+                    if(title) txt = title.innerText;
+                }
+                caption.innerText = txt || 'لحظة جميلة';
             });
         }
         
