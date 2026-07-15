@@ -600,7 +600,7 @@
                     committee.forEach(function(m) {
                         var card = document.createElement('div');
                         card.className = 'member-card';
-                        var photoSrc = Tala2e3Members.getStoredPhoto(m._id) || Tala2e3Members.findPhotoByName(m.fullName) || 'images/logo.jpg';
+                        var photoSrc = m.photo || 'images/logo.jpg';
                         var roleLabel = m.role || 'عضو';
                         card.innerHTML =
                             '<div class="member-image">' +

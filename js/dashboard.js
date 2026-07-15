@@ -286,7 +286,7 @@
       }
       filtered.forEach(function (m, i) {
         var tr = document.createElement('tr');
-        var photoUrl = Tala2e3Members.getStoredPhoto(m._id) || Tala2e3Members.findPhotoByName(m.fullName) || '';
+        var photoUrl = m.photo || '';
         tr.innerHTML =
           '<td>' + toArabicNum(i + 1) + '</td>' +
           '<td><strong>' + m.fullName + '</strong></td>' +
@@ -307,9 +307,10 @@
     });
   }
 
-  function uploadPhoto(file, cb) {
+  function uploadPhoto(file, memberId, cb) {
     var formData = new FormData();
     formData.append('photo', file);
+    if (memberId) formData.append('memberId', memberId);
     api('/members/upload-photo', { method: 'POST', body: formData, formData: true }).then(function (res) {
       if (res.url) cb(res.url);
       else alert('فشل رفع الصورة.');
@@ -342,7 +343,7 @@
     document.getElementById('mBloodType').value = m.bloodType || 'A+';
     document.getElementById('mRole').value = m.role || 'عضو';
     document.getElementById('mPhotoFile').value = '';
-    var photo = Tala2e3Members.getStoredPhoto(m._id) || Tala2e3Members.findPhotoByName(m.fullName) || '';
+    var photo = m.photo || '';
     document.getElementById('mPhotoUrl').value = photo;
     var preview = document.getElementById('photoPreview');
     var img = document.getElementById('photoPreviewImg');
@@ -394,47 +395,50 @@
   function saveMember() {
     var name = document.getElementById('mFullName').value.trim();
     if (!name) { alert('الرجاء إدخال الاسم الكامل.'); return; }
-    var dob = document.getElementById('mDob').value;
+    var photo = document.getElementById('mPhotoUrl').value.trim();
     var data = {
       fullName: name,
-      dob: dob,
+      dob: document.getElementById('mDob').value,
       bloodType: document.getElementById('mBloodType').value,
       role: document.getElementById('mRole').value,
       promise: document.getElementById('mPromise').value,
       costume: document.getElementById('mCostume').value,
       commitment: document.getElementById('mCommitment').value,
+      photo: photo,
     };
 
-    function doSave(photoUrl) {
-      function afterSave(saved) {
-        if (photoUrl) Tala2e3Members.setStoredPhoto(saved._id, photoUrl);
+    function doSave() {
+      var promise;
+      if (editMemberId) {
+        promise = api('/members/' + editMemberId, { method: 'PUT', body: data });
+      } else {
+        promise = api('/members', { method: 'POST', body: data });
+      }
+      promise.then(function () {
         resetMemberForm();
         loadMembersTable();
         showMsg('✅ تم حفظ العضو بنجاح');
-      }
-      if (editMemberId) {
-        api('/members/' + editMemberId, { method: 'PUT', body: data }).then(function (saved) { afterSave(saved); });
-      } else {
-        api('/members', { method: 'POST', body: data }).then(function (saved) { afterSave(saved); });
-      }
+      }).catch(function () {
+        alert('فشل الحفظ.');
+      });
     }
 
     var fileInput = document.getElementById('mPhotoFile');
     var file = fileInput.files[0];
     if (file) {
-      uploadPhoto(file, function (url) {
+      uploadPhoto(file, editMemberId, function (url) {
         document.getElementById('mPhotoUrl').value = url;
-        doSave(url);
+        data.photo = url;
+        doSave();
       });
     } else {
-      doSave(document.getElementById('mPhotoUrl').value.trim());
+      doSave();
     }
   }
 
   function deleteMember(id) {
     if (!confirm('هل أنت متأكد من حذف هذا العضو؟')) return;
     api('/members/' + id, { method: 'DELETE' }).then(function () {
-      Tala2e3Members.setStoredPhoto(id, '');
       if (editMemberId === id) resetMemberForm();
       loadMembersTable();
       showMsg('✅ تم حذف العضو');

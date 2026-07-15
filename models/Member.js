@@ -11,6 +11,7 @@ const memberSchema = new mongoose.Schema({
   costume: { type: String, default: 'نعم' },
   commitment: { type: String, default: 'عالٍ' },
   working: { type: String, default: 'نعم' },
+  photo: { type: String, default: '' },
 }, { timestamps: true });
 
 export default mongoose.models.Member || mongoose.model('Member', memberSchema);

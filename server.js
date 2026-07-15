@@ -58,7 +58,7 @@ app.get('/api/members/:id', async (req, res) => {
 
 app.post('/api/members', requireAuth, async (req, res) => {
   await connectToDatabase();
-  const { fullName, dob, bloodType, role, promise, knights, costume, commitment, working } = req.body;
+  const { fullName, dob, bloodType, role, promise, knights, costume, commitment, working, photo } = req.body;
   if (!fullName || !fullName.trim()) {
     return res.status(400).json({ error: 'الاسم الكامل مطلوب.' });
   }
@@ -83,6 +83,7 @@ app.post('/api/members', requireAuth, async (req, res) => {
     costume: costume || 'نعم',
     commitment: commitment || 'عالٍ',
     working: working || 'نعم',
+    photo: photo || '',
   });
   res.status(201).json(member);
 });
@@ -92,7 +93,7 @@ app.put('/api/members/:id', requireAuth, async (req, res) => {
   const member = await Member.findById(req.params.id);
   if (!member) return res.status(404).json({ error: 'العضو غير موجود.' });
 
-  const { fullName, dob, bloodType, role, promise, knights, costume, commitment, working } = req.body;
+  const { fullName, dob, bloodType, role, promise, knights, costume, commitment, working, photo } = req.body;
 
   if (fullName !== undefined) {
     if (!fullName.trim()) return res.status(400).json({ error: 'الاسم الكامل مطلوب.' });
@@ -122,6 +123,7 @@ app.put('/api/members/:id', requireAuth, async (req, res) => {
   if (costume !== undefined) member.costume = costume;
   if (commitment !== undefined) member.commitment = commitment;
   if (working !== undefined) member.working = working;
+  if (photo !== undefined) member.photo = photo;
 
   await member.save();
   res.json(member.toObject());
@@ -137,7 +139,12 @@ app.delete('/api/members/:id', requireAuth, async (req, res) => {
 // ----- Member Photo Upload -----
 app.post('/api/members/upload-photo', requireAuth, upload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'الرجاء اختيار صورة.' });
-  res.json({ url: toDataUri(req.file) });
+  const url = toDataUri(req.file);
+  if (req.body.memberId) {
+    await connectToDatabase();
+    await Member.findByIdAndUpdate(req.body.memberId, { photo: url });
+  }
+  res.json({ url });
 });
 
 // ----- Meetings (admin only) -----
