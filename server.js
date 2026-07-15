@@ -2,8 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { connectToDatabase } from './lib/db.js';
 import { requireAuth, authenticateAdmin } from './lib/auth.js';
 import Member from './models/Member.js';
@@ -11,19 +9,14 @@ import Meeting from './models/Meeting.js';
 import Event from './models/Event.js';
 import MonthlyActivity from './models/MonthlyActivity.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, 'uploads');
-import { mkdirSync, existsSync } from 'fs';
-if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + ext);
-  },
-});
+const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+function toDataUri(file) {
+  const base64 = file.buffer.toString('base64');
+  const mime = file.mimetype || 'image/jpeg';
+  return `data:${mime};base64,${base64}`;
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,7 +24,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
-app.use('/uploads', express.static(uploadsDir));
 
 // ----- Auth -----
 app.post('/api/auth/login', async (req, res) => {
@@ -145,7 +137,7 @@ app.delete('/api/members/:id', requireAuth, async (req, res) => {
 // ----- Member Photo Upload -----
 app.post('/api/members/upload-photo', requireAuth, upload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'الرجاء اختيار صورة.' });
-  res.json({ url: '/uploads/' + req.file.filename });
+  res.json({ url: toDataUri(req.file) });
 });
 
 // ----- Meetings (admin only) -----
@@ -234,7 +226,7 @@ app.post('/api/events', requireAuth, upload.single('image'), async (req, res) =>
   }
   let imageUrl = req.body.imageUrl || '';
   if (req.file) {
-    imageUrl = '/uploads/' + req.file.filename;
+    imageUrl = toDataUri(req.file);
   }
   const event = await Event.create({
     title: title.trim(),
@@ -273,7 +265,7 @@ app.put('/api/events/:id', requireAuth, upload.single('image'), async (req, res)
   }
   if (time !== undefined) event.time = time;
   if (req.file) {
-    event.imageUrl = '/uploads/' + req.file.filename;
+    event.imageUrl = toDataUri(req.file);
   } else if (imageUrl !== undefined) {
     event.imageUrl = imageUrl;
   }
@@ -308,7 +300,7 @@ app.post('/api/monthly-activities', requireAuth, upload.fields([
 
   let scheduleImage = '';
   if (req.files && req.files.scheduleImage && req.files.scheduleImage[0]) {
-    scheduleImage = '/uploads/' + req.files.scheduleImage[0].filename;
+    scheduleImage = toDataUri(req.files.scheduleImage[0]);
   }
 
   let parsedMeetings = [];
@@ -316,7 +308,7 @@ app.post('/api/monthly-activities', requireAuth, upload.fields([
 
   if (req.files && req.files.meetingPhotos) {
     req.files.meetingPhotos.forEach((file, idx) => {
-      if (parsedMeetings[idx]) parsedMeetings[idx].photo = '/uploads/' + file.filename;
+      if (parsedMeetings[idx]) parsedMeetings[idx].photo = toDataUri(file);
     });
   }
 
@@ -350,14 +342,14 @@ app.put('/api/monthly-activities/:id', requireAuth, upload.fields([
   if (monthName !== undefined) activity.monthName = monthName;
 
   if (req.files && req.files.scheduleImage && req.files.scheduleImage[0]) {
-    activity.scheduleImage = '/uploads/' + req.files.scheduleImage[0].filename;
+    activity.scheduleImage = toDataUri(req.files.scheduleImage[0]);
   }
 
   if (meetings !== undefined) {
     try { activity.meetings = JSON.parse(meetings); } catch (e) {}
     if (req.files && req.files.meetingPhotos) {
       req.files.meetingPhotos.forEach((file, idx) => {
-        if (activity.meetings[idx]) activity.meetings[idx].photo = '/uploads/' + file.filename;
+        if (activity.meetings[idx]) activity.meetings[idx].photo = toDataUri(file);
       });
     }
   }
