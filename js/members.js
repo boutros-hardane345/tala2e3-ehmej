@@ -22,7 +22,9 @@
 
   function getStoredPhoto(memberId) {
     var map = JSON.parse(localStorage.getItem(PHOTO_MAP_KEY) || '{}');
-    return map[memberId] || '';
+    var url = map[memberId] || '';
+    if (url.startsWith('/uploads/')) return '';
+    return url;
   }
 
   function setStoredPhoto(memberId, photoUrl) {
@@ -57,6 +59,18 @@
     }
     return '';
   }
+
+  (function cleanupOldUploads() {
+    var map = JSON.parse(localStorage.getItem(PHOTO_MAP_KEY) || '{}');
+    var changed = false;
+    for (var key in map) {
+      if (map[key] && map[key].startsWith('/uploads/')) {
+        delete map[key];
+        changed = true;
+      }
+    }
+    if (changed) localStorage.setItem(PHOTO_MAP_KEY, JSON.stringify(map));
+  })();
 
   window.Tala2e3Members = {
     getAvailablePhotos: getAvailablePhotos,
