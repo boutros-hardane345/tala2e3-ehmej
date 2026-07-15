@@ -552,25 +552,20 @@
             if(!modal) return;
             const modalImg = document.getElementById('modalImage');
             const caption = document.getElementById('modalCaption');
-            const images = document.querySelectorAll('.member-image img, .about-image img');
-            
-            images.forEach(img => {
-                img.removeEventListener('click', img._handler);
-                const handler = function() {
-                    modal.style.display = 'block';
-                    modalImg.src = this.src;
-                    let txt = this.alt || '';
-                    const parentCard = this.closest('.member-card');
-                    if(parentCard) {
-                        const name = parentCard.querySelector('h4');
-                        if(name) txt = name.innerText;
-                        const role = parentCard.querySelector('.member-role, .member-role-badge');
-                        if(role && txt) txt = txt + ' - ' + role.innerText;
-                    }
-                    caption.innerText = txt || 'صورة تذكارية';
-                };
-                img._handler = handler;
-                img.addEventListener('click', handler);
+            document.addEventListener('click', function(e) {
+                const img = e.target.closest('.member-image img, .about-image img');
+                if (!img) return;
+                modal.style.display = 'block';
+                modalImg.src = img.src;
+                let txt = img.alt || '';
+                const parentCard = img.closest('.member-card');
+                if(parentCard) {
+                    const name = parentCard.querySelector('h4');
+                    if(name) txt = name.innerText;
+                    const role = parentCard.querySelector('.member-role, .member-role-badge');
+                    if(role && txt) txt = txt + ' - ' + role.innerText;
+                }
+                caption.innerText = txt || 'صورة تذكارية';
             });
         }
         
