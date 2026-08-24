@@ -200,7 +200,56 @@
             border: 2px solid var(--crimson);
             color: var(--crimson);
         }
-        
+
+        .jingles-list {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .jingle-year-group {
+            background: rgba(255,255,255,0.88);
+            border-radius: 18px;
+            padding: 1.4rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(201,168,76,0.16);
+        }
+
+        .jingle-year-title {
+            color: var(--crimson-deep);
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .jingle-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .jingle-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.2rem;
+            box-shadow: var(--shadow-sm);
+            border-right: 4px solid var(--gold);
+        }
+
+        .jingle-card h3 {
+            color: var(--crimson-deep);
+            margin-bottom: 0.35rem;
+        }
+
+        .jingle-card p {
+            color: var(--text-mid);
+            margin-bottom: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .jingle-card audio {
+            width: 100%;
+        }
+
         iframe {
             border-radius: 20px;
             box-shadow: var(--shadow-lg);
@@ -247,6 +296,13 @@
                 <button class="btn-view" data-img="images/rules.jpeg" data-title="قيود عامّة">عرض القيود</button>
             </div>
         </div>
+    </div>
+</section>
+
+<section class="section" id="jingles">
+    <div class="section-title">أناشيدنا السنوية</div>
+    <div id="jinglesList" class="jingles-list">
+        <p class="center-text" style="color:var(--text-light);">جاري تحميل الأناشيد...</p>
     </div>
 </section>
 
@@ -553,7 +609,53 @@
         
         initLightbox();
         setupLightbox();
-        
+
+        const jinglesContainer = document.getElementById('jinglesList');
+        if (jinglesContainer) {
+            fetch(API_BASE_URL + '/api/library-jingles').then(function(r) { return r.json(); }).then(function(list) {
+                if (!list || list.length === 0) {
+                    jinglesContainer.innerHTML = '<p class="center-text" style="color:var(--text-light);">لا توجد أناشيد مضافة بعد.</p>';
+                    return;
+                }
+
+                const grouped = {};
+                list.forEach(function(item) {
+                    const year = item.year || 'غير محدد';
+                    if (!grouped[year]) grouped[year] = [];
+                    grouped[year].push(item);
+                });
+
+                jinglesContainer.innerHTML = '';
+                Object.keys(grouped).sort(function(a, b) { return parseInt(b, 10) - parseInt(a, 10); }).forEach(function(year) {
+                    const group = document.createElement('div');
+                    group.className = 'jingle-year-group';
+
+                    const yearTitle = document.createElement('div');
+                    yearTitle.className = 'jingle-year-title';
+                    yearTitle.innerText = year.replace(/\d/g, function(c) { return '٠١٢٣٤٥٦٧٨٩'[parseInt(c, 10)]; });
+                    group.appendChild(yearTitle);
+
+                    const cards = document.createElement('div');
+                    cards.className = 'jingle-cards';
+
+                    grouped[year].forEach(function(item) {
+                        const card = document.createElement('div');
+                        card.className = 'jingle-card';
+                        card.innerHTML =
+                            '<h3>' + (item.title || 'جنغل سنوي') + '</h3>' +
+                            (item.description ? '<p>' + item.description + '</p>' : '') +
+                            '<audio controls controlsList="nodownload"><source src="' + item.audioUrl + '"></audio>';
+                        cards.appendChild(card);
+                    });
+
+                    group.appendChild(cards);
+                    jinglesContainer.appendChild(group);
+                });
+            }).catch(function() {
+                jinglesContainer.innerHTML = '<p class="center-text" style="color:var(--text-light);">تعذر تحميل الأناشيد حالياً.</p>';
+            });
+        }
+
         // Active nav
         const currentPage = window.location.pathname.split('/').pop() || 'contact.html';
         document.querySelectorAll('.nav-links a').forEach(link => {
