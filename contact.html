@@ -250,14 +250,6 @@
             width: 100%;
         }
 
-        .jingle-card iframe {
-            width: 100%;
-            height: 220px;
-            border: 0;
-            border-radius: 14px;
-            box-shadow: var(--shadow-sm);
-        }
-
         iframe {
             border-radius: 20px;
             box-shadow: var(--shadow-lg);
@@ -627,28 +619,11 @@
                 .replace(/'/g, '&#39;');
         }
 
-        function getYoutubeEmbedUrl(url) {
-            if (!url) return '';
-            const match = String(url).trim().match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/i);
-            if (!match || !match[1]) return '';
-            return 'https://www.youtube.com/embed/' + match[1];
-        }
-
         const jinglesContainer = document.getElementById('jinglesList');
         if (jinglesContainer) {
             fetch(API_BASE_URL + '/api/library-jingles').then(function(r) { return r.json(); }).then(function(list) {
                 if (!list || list.length === 0) {
-                    jinglesContainer.innerHTML =
-                        '<div class="jingle-year-group">' +
-                            '<div class="jingle-year-title">٢٠٢٦</div>' +
-                            '<div class="jingle-cards">' +
-                                '<div class="jingle-card">' +
-                                    '<h3>نشيد الطّلائع الرسمي</h3>' +
-                                    '<p>يمكنكم الاستماع إلى النشيد الحالي مباشرةً من هنا إلى حين إضافة الأناشيد السنوية من لوحة التحكم.</p>' +
-                                    '<iframe src="https://www.youtube.com/embed/1KSivo2FOgM" title="نشيد الطّلائع الرسمي" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>';
+                    jinglesContainer.innerHTML = '<p class="center-text" style="color:var(--text-light);">لا توجد أناشيد مضافة بعد.</p>';
                     return;
                 }
 
@@ -675,14 +650,10 @@
                     grouped[year].forEach(function(item) {
                         const card = document.createElement('div');
                         card.className = 'jingle-card';
-                        const embedUrl = getYoutubeEmbedUrl(item.youtubeUrl || '');
-                        const mediaHtml = embedUrl
-                            ? '<iframe src="' + escapeHtml(embedUrl) + '" title="' + escapeHtml(item.title || 'جنغل سنوي') + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
-                            : '<audio controls controlsList="nodownload"><source src="' + item.audioUrl + '"></audio>';
                         card.innerHTML =
                             '<h3>' + escapeHtml(item.title || 'جنغل سنوي') + '</h3>' +
                             (item.description ? '<p>' + escapeHtml(item.description) + '</p>' : '') +
-                            mediaHtml;
+                            '<audio controls controlsList="nodownload"><source src="' + item.audioUrl + '"></audio>';
                         cards.appendChild(card);
                     });
 

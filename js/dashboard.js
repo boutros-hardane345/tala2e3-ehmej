@@ -635,7 +635,6 @@
     document.getElementById('jingleYear').value = '2026';
     document.getElementById('jingleTitle').value = '';
     document.getElementById('jingleDescription').value = '';
-    document.getElementById('jingleYoutubeUrl').value = '';
     document.getElementById('jingleAudio').value = '';
     document.getElementById('libraryJingleFormTitle').textContent = '➕ إضافة جنغل جديد';
     document.getElementById('saveJingleBtn').textContent = '💾 حفظ الجنغل';
@@ -647,7 +646,6 @@
     document.getElementById('jingleYear').value = jingle.year || '2026';
     document.getElementById('jingleTitle').value = jingle.title || '';
     document.getElementById('jingleDescription').value = jingle.description || '';
-    document.getElementById('jingleYoutubeUrl').value = jingle.youtubeUrl || '';
     document.getElementById('jingleAudio').value = '';
     document.getElementById('libraryJingleFormTitle').textContent = '✏️ تعديل الجنغل';
     document.getElementById('saveJingleBtn').textContent = '💾 حفظ التعديلات';
@@ -661,13 +659,6 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
-  }
-
-  function getYoutubeEmbedUrl(url) {
-    if (!url) return '';
-    var match = String(url).trim().match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/i);
-    if (!match || !match[1]) return '';
-    return 'https://www.youtube.com/embed/' + match[1];
   }
 
   function editJingle(id) {
@@ -702,13 +693,7 @@
       list.forEach(function (jingle) {
         var card = document.createElement('div');
         card.className = 'event-dash-card';
-        var mediaHtml = '';
-        var embedUrl = getYoutubeEmbedUrl(jingle.youtubeUrl || '');
-        if (embedUrl) {
-          mediaHtml = '<iframe src="' + escapeHtml(embedUrl) + '" title="' + escapeHtml(jingle.title || 'جنغل') + '" style="width:100%;height:220px;margin-top:0.5rem;border:0;border-radius:12px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-        } else if (jingle.audioUrl) {
-          mediaHtml = '<audio controls controlsList="nodownload" style="width:100%;margin-top:0.5rem;"><source src="' + jingle.audioUrl + '"></audio>';
-        }
+        var mediaHtml = jingle.audioUrl ? '<audio controls controlsList="nodownload" style="width:100%;margin-top:0.5rem;"><source src="' + jingle.audioUrl + '"></audio>' : '';
         card.innerHTML =
           '<div class="event-dash-header">' +
             '<strong>' + escapeHtml(jingle.title || 'جنغل') + '</strong>' +
@@ -738,18 +723,16 @@
     var year = document.getElementById('jingleYear').value.trim();
     var title = document.getElementById('jingleTitle').value.trim();
     var description = document.getElementById('jingleDescription').value.trim();
-    var youtubeUrl = document.getElementById('jingleYoutubeUrl').value.trim();
     var audioFile = document.getElementById('jingleAudio').files[0];
 
     if (!year) { alert('الرجاء إدخال السنة.'); return; }
     if (!title) { alert('الرجاء إدخال العنوان.'); return; }
-    if (!editJingleId && !audioFile && !youtubeUrl) { alert('الرجاء اختيار ملف صوتي أو إضافة رابط يوتيوب.'); return; }
+    if (!editJingleId && !audioFile) { alert('الرجاء اختيار ملف صوتي.'); return; }
 
     var formData = new FormData();
     formData.append('year', year);
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('youtubeUrl', youtubeUrl);
     if (audioFile) formData.append('audio', audioFile);
 
     var opts = { method: 'POST', body: formData, formData: true };
