@@ -8,11 +8,9 @@ import Member from './models/Member.js';
 import Meeting from './models/Meeting.js';
 import Event from './models/Event.js';
 import MonthlyActivity from './models/MonthlyActivity.js';
-import LibraryJingle from './models/LibraryJingle.js';
 
 const storage = multer.memoryStorage();
 const imageUpload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
-const audioUpload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 function toDataUri(file) {
   const base64 = file.buffer.toString('base64');
@@ -372,79 +370,6 @@ app.delete('/api/monthly-activities/:id', requireAuth, async (req, res) => {
   const activity = await MonthlyActivity.findByIdAndDelete(req.params.id);
   if (!activity) return res.status(404).json({ error: 'غير موجود.' });
   res.json({ message: 'تم الحذف.' });
-});
-
-// ----- Library Jingles (public read, admin write) -----
-app.get('/api/library-jingles', async (req, res) => {
-  await connectToDatabase();
-  const jingles = await LibraryJingle.find().sort({ year: -1, createdAt: -1 }).lean();
-  res.json(jingles);
-});
-
-app.get('/api/library-jingles/:id', async (req, res) => {
-  await connectToDatabase();
-  const jingle = await LibraryJingle.findById(req.params.id).lean();
-  if (!jingle) return res.status(404).json({ error: 'النشيد غير موجود.' });
-  res.json(jingle);
-});
-
-app.post('/api/library-jingles', requireAuth, audioUpload.single('audio'), async (req, res) => {
-  await connectToDatabase();
-  const { year, title, description } = req.body;
-  if (!year || !String(year).trim()) {
-    return res.status(400).json({ error: 'السنة مطلوبة.' });
-  }
-  if (!title || !String(title).trim()) {
-    return res.status(400).json({ error: 'العنوان مطلوب.' });
-  }
-  if (!req.file) {
-    return res.status(400).json({ error: 'الرجاء اختيار ملف صوتي.' });
-  }
-  if (!req.file.mimetype || req.file.mimetype.indexOf('audio/') !== 0) {
-    return res.status(400).json({ error: 'الملف المرفوع يجب أن يكون صوتياً.' });
-  }
-
-  const jingle = await LibraryJingle.create({
-    year: String(year).trim(),
-    title: String(title).trim(),
-    description: description ? String(description).trim() : '',
-    audioUrl: toDataUri(req.file),
-  });
-  res.status(201).json(jingle.toObject());
-});
-
-app.put('/api/library-jingles/:id', requireAuth, audioUpload.single('audio'), async (req, res) => {
-  await connectToDatabase();
-  const jingle = await LibraryJingle.findById(req.params.id);
-  if (!jingle) return res.status(404).json({ error: 'النشيد غير موجود.' });
-
-  const { year, title, description } = req.body;
-  if (year !== undefined) {
-    if (!String(year).trim()) return res.status(400).json({ error: 'السنة مطلوبة.' });
-    jingle.year = String(year).trim();
-  }
-  if (title !== undefined) {
-    if (!String(title).trim()) return res.status(400).json({ error: 'العنوان مطلوب.' });
-    jingle.title = String(title).trim();
-  }
-  if (description !== undefined) jingle.description = String(description).trim();
-
-  if (req.file) {
-    if (!req.file.mimetype || req.file.mimetype.indexOf('audio/') !== 0) {
-      return res.status(400).json({ error: 'الملف المرفوع يجب أن يكون صوتياً.' });
-    }
-    jingle.audioUrl = toDataUri(req.file);
-  }
-
-  await jingle.save();
-  res.json(jingle.toObject());
-});
-
-app.delete('/api/library-jingles/:id', requireAuth, async (req, res) => {
-  await connectToDatabase();
-  const jingle = await LibraryJingle.findByIdAndDelete(req.params.id);
-  if (!jingle) return res.status(404).json({ error: 'النشيد غير موجود.' });
-  res.json({ message: 'تم حذف النشيد بنجاح.' });
 });
 
 app.listen(PORT, () => {

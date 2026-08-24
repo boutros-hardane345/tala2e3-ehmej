@@ -450,7 +450,6 @@
   // =========================================================
   var editMonthlyId = null;
   var monthNamesMap = { '01': 'كانون الثاني', '02': 'شباط', '03': 'آذار', '04': 'نيسان', '05': 'أيار', '06': 'حزيران', '07': 'تموز', '08': 'آب', '09': 'أيلول', '10': 'تشرين الأول', '11': 'تشرين الثاني', '12': 'كانون الأول' };
-  var editJingleId = null;
 
   function addMeetingRow(title, photoUrl) {
     var container = document.getElementById('meetingsContainer');
@@ -628,134 +627,6 @@
   }
 
   // =========================================================
-  //  LIBRARY JINGLES CRUD (API)
-  // =========================================================
-  function resetJingleForm() {
-    editJingleId = null;
-    document.getElementById('jingleYear').value = '2026';
-    document.getElementById('jingleTitle').value = '';
-    document.getElementById('jingleDescription').value = '';
-    document.getElementById('jingleAudio').value = '';
-    document.getElementById('libraryJingleFormTitle').textContent = '➕ إضافة جنغل جديد';
-    document.getElementById('saveJingleBtn').textContent = '💾 حفظ الجنغل';
-    document.getElementById('cancelJingleBtn').style.display = 'none';
-  }
-
-  function fillJingleForm(jingle) {
-    editJingleId = jingle._id;
-    document.getElementById('jingleYear').value = jingle.year || '2026';
-    document.getElementById('jingleTitle').value = jingle.title || '';
-    document.getElementById('jingleDescription').value = jingle.description || '';
-    document.getElementById('jingleAudio').value = '';
-    document.getElementById('libraryJingleFormTitle').textContent = '✏️ تعديل الجنغل';
-    document.getElementById('saveJingleBtn').textContent = '💾 حفظ التعديلات';
-    document.getElementById('cancelJingleBtn').style.display = 'inline-block';
-  }
-
-  function escapeHtml(value) {
-    return String(value || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function editJingle(id) {
-    api('/library-jingles/' + id).then(function (jingle) {
-      if (jingle && jingle._id) fillJingleForm(jingle);
-      else if (jingle && jingle.error) alert(jingle.error);
-    });
-  }
-
-  function deleteJingle(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا الجنغل؟')) return;
-    api('/library-jingles/' + id, { method: 'DELETE' }).then(function (res) {
-      if (res && res.error) {
-        alert(res.error);
-        return;
-      }
-      if (editJingleId === id) resetJingleForm();
-      loadJinglesList();
-      showMsg('✅ تم حذف الجنغل');
-    });
-  }
-
-  function loadJinglesList() {
-    api('/library-jingles').then(function (list) {
-      var container = document.getElementById('libraryJinglesList');
-      container.innerHTML = '';
-      if (!list || list.length === 0) {
-        container.innerHTML = '<p class="empty-text">لا توجد أناشيد محفوظة بعد.</p>';
-        return;
-      }
-
-      list.forEach(function (jingle) {
-        var card = document.createElement('div');
-        card.className = 'event-dash-card';
-        var mediaHtml = jingle.audioUrl ? '<audio controls controlsList="nodownload" style="width:100%;margin-top:0.5rem;"><source src="' + jingle.audioUrl + '"></audio>' : '';
-        card.innerHTML =
-          '<div class="event-dash-header">' +
-            '<strong>' + escapeHtml(jingle.title || 'جنغل') + '</strong>' +
-            '<span class="event-type-tag upcoming">' + toArabicNum(jingle.year || '') + '</span>' +
-          '</div>' +
-          (jingle.description ? '<p class="event-dash-desc">' + escapeHtml(jingle.description) + '</p>' : '') +
-          mediaHtml +
-          '<div class="event-dash-actions">' +
-            '<button class="dash-btn secondary jingle-edit" data-id="' + jingle._id + '">✏️ تعديل</button>' +
-            '<button class="dash-btn danger jingle-del" data-id="' + jingle._id + '">🗑️ حذف</button>' +
-          '</div>';
-        container.appendChild(card);
-      });
-
-      document.querySelectorAll('.jingle-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () { editJingle(this.dataset.id); });
-      });
-      document.querySelectorAll('.jingle-del').forEach(function (btn) {
-        btn.addEventListener('click', function () { deleteJingle(this.dataset.id); });
-      });
-    }).catch(function () {
-      document.getElementById('libraryJinglesList').innerHTML = '<p class="empty-text">⚠️ تعذر الاتصال بالخادم</p>';
-    });
-  }
-
-  function saveJingle() {
-    var year = document.getElementById('jingleYear').value.trim();
-    var title = document.getElementById('jingleTitle').value.trim();
-    var description = document.getElementById('jingleDescription').value.trim();
-    var audioFile = document.getElementById('jingleAudio').files[0];
-
-    if (!year) { alert('الرجاء إدخال السنة.'); return; }
-    if (!title) { alert('الرجاء إدخال العنوان.'); return; }
-    if (!editJingleId && !audioFile) { alert('الرجاء اختيار ملف صوتي.'); return; }
-
-    var formData = new FormData();
-    formData.append('year', year);
-    formData.append('title', title);
-    formData.append('description', description);
-    if (audioFile) formData.append('audio', audioFile);
-
-    var opts = { method: 'POST', body: formData, formData: true };
-    var url = '/library-jingles';
-    if (editJingleId) {
-      opts.method = 'PUT';
-      url = '/library-jingles/' + editJingleId;
-    }
-
-    api(url, opts).then(function (res) {
-      if (res && res.error) {
-        alert(res.error);
-        return;
-      }
-      resetJingleForm();
-      loadJinglesList();
-      showMsg('✅ تم حفظ الجنغل بنجاح');
-    }).catch(function () {
-      alert('فشل الحفظ.');
-    });
-  }
-
-  // =========================================================
   //  INIT
   // =========================================================
   function init() {
@@ -763,9 +634,7 @@
     loadCommittee();
     loadMembersTable();
     loadMonthlyList();
-    loadJinglesList();
     resetMonthlyForm();
-    resetJingleForm();
 
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
@@ -779,7 +648,6 @@
         if (this.dataset.tab === 'committee') loadCommittee();
         if (this.dataset.tab === 'members') loadMembersTable();
         if (this.dataset.tab === 'monthly') { loadMonthlyList(); resetMonthlyForm(); }
-        if (this.dataset.tab === 'library') { loadJinglesList(); resetJingleForm(); }
       });
     });
 
@@ -820,11 +688,6 @@
     document.getElementById('cancelMonthlyBtn').addEventListener('click', resetMonthlyForm);
     document.getElementById('refreshMonthly').addEventListener('click', function () { loadMonthlyList(); resetMonthlyForm(); });
     document.getElementById('addMeetingBtn').addEventListener('click', function () { addMeetingRow('', ''); });
-
-    // Library Jingles
-    document.getElementById('saveJingleBtn').addEventListener('click', saveJingle);
-    document.getElementById('cancelJingleBtn').addEventListener('click', resetJingleForm);
-    document.getElementById('refreshJingles').addEventListener('click', function () { loadJinglesList(); resetJingleForm(); });
   }
 
   document.addEventListener('DOMContentLoaded', init);
