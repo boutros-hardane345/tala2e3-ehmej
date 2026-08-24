@@ -390,25 +390,26 @@ app.get('/api/library-jingles/:id', async (req, res) => {
 
 app.post('/api/library-jingles', requireAuth, audioUpload.single('audio'), async (req, res) => {
   await connectToDatabase();
-  const { year, title, description } = req.body;
+  const { year, title, description, youtubeUrl } = req.body;
   if (!year || !String(year).trim()) {
     return res.status(400).json({ error: 'السنة مطلوبة.' });
   }
   if (!title || !String(title).trim()) {
     return res.status(400).json({ error: 'العنوان مطلوب.' });
   }
-  if (!req.file) {
-    return res.status(400).json({ error: 'الرجاء اختيار ملف صوتي.' });
-  }
-  if (!req.file.mimetype || req.file.mimetype.indexOf('audio/') !== 0) {
+  if (req.file && (!req.file.mimetype || req.file.mimetype.indexOf('audio/') !== 0)) {
     return res.status(400).json({ error: 'الملف المرفوع يجب أن يكون صوتياً.' });
+  }
+  if (!req.file && (!youtubeUrl || !String(youtubeUrl).trim())) {
+    return res.status(400).json({ error: 'أضف ملفاً صوتياً أو رابط يوتيوب.' });
   }
 
   const jingle = await LibraryJingle.create({
     year: String(year).trim(),
     title: String(title).trim(),
     description: description ? String(description).trim() : '',
-    audioUrl: toDataUri(req.file),
+    audioUrl: req.file ? toDataUri(req.file) : '',
+    youtubeUrl: youtubeUrl ? String(youtubeUrl).trim() : '',
   });
   res.status(201).json(jingle.toObject());
 });
@@ -418,7 +419,7 @@ app.put('/api/library-jingles/:id', requireAuth, audioUpload.single('audio'), as
   const jingle = await LibraryJingle.findById(req.params.id);
   if (!jingle) return res.status(404).json({ error: 'النشيد غير موجود.' });
 
-  const { year, title, description } = req.body;
+  const { year, title, description, youtubeUrl } = req.body;
   if (year !== undefined) {
     if (!String(year).trim()) return res.status(400).json({ error: 'السنة مطلوبة.' });
     jingle.year = String(year).trim();
@@ -428,12 +429,17 @@ app.put('/api/library-jingles/:id', requireAuth, audioUpload.single('audio'), as
     jingle.title = String(title).trim();
   }
   if (description !== undefined) jingle.description = String(description).trim();
+  if (youtubeUrl !== undefined) jingle.youtubeUrl = String(youtubeUrl).trim();
 
   if (req.file) {
     if (!req.file.mimetype || req.file.mimetype.indexOf('audio/') !== 0) {
       return res.status(400).json({ error: 'الملف المرفوع يجب أن يكون صوتياً.' });
     }
     jingle.audioUrl = toDataUri(req.file);
+  }
+
+  if (!jingle.audioUrl && !jingle.youtubeUrl) {
+    return res.status(400).json({ error: 'أضف ملفاً صوتياً أو رابط يوتيوب.' });
   }
 
   await jingle.save();
