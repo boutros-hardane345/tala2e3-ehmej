@@ -18,6 +18,25 @@ function toDataUri(file) {
   return `data:${mime};base64,${base64}`;
 }
 
+function toArray(value) {
+  if (value === undefined) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function attachMeetingPhotos(meetings, files, indexes) {
+  if (!files || files.length === 0 || !meetings || meetings.length === 0) return;
+  const mappedIndexes = toArray(indexes)
+    .map((index) => Number.parseInt(index, 10))
+    .filter((index) => Number.isInteger(index) && index >= 0);
+
+  files.forEach((file, idx) => {
+    const meetingIndex = mappedIndexes[idx];
+    if (meetingIndex !== undefined && meetings[meetingIndex]) {
+      meetings[meetingIndex].photo = toDataUri(file);
+    }
+  });
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -297,6 +316,13 @@ app.get('/api/monthly-activities', async (req, res) => {
   res.json(activities);
 });
 
+app.get('/api/monthly-activities/:id', async (req, res) => {
+  await connectToDatabase();
+  const activity = await MonthlyActivity.findById(req.params.id).lean();
+  if (!activity) return res.status(404).json({ error: 'غير موجود.' });
+  res.json(activity);
+});
+
 app.post('/api/monthly-activities', requireAuth, imageUpload.fields([
   { name: 'scheduleImage', maxCount: 1 },
   { name: 'meetingPhotos', maxCount: 50 },
@@ -313,11 +339,7 @@ app.post('/api/monthly-activities', requireAuth, imageUpload.fields([
   let parsedMeetings = [];
   try { parsedMeetings = meetings ? JSON.parse(meetings) : []; } catch (e) { parsedMeetings = []; }
 
-  if (req.files && req.files.meetingPhotos) {
-    req.files.meetingPhotos.forEach((file, idx) => {
-      if (parsedMeetings[idx]) parsedMeetings[idx].photo = toDataUri(file);
-    });
-  }
+  attachMeetingPhotos(parsedMeetings, req.files && req.files.meetingPhotos, req.body.meetingPhotoIndexes);
 
   const existing = await MonthlyActivity.findOne({ year, month });
   if (existing) {
@@ -354,11 +376,7 @@ app.put('/api/monthly-activities/:id', requireAuth, imageUpload.fields([
 
   if (meetings !== undefined) {
     try { activity.meetings = JSON.parse(meetings); } catch (e) {}
-    if (req.files && req.files.meetingPhotos) {
-      req.files.meetingPhotos.forEach((file, idx) => {
-        if (activity.meetings[idx]) activity.meetings[idx].photo = toDataUri(file);
-      });
-    }
+    attachMeetingPhotos(activity.meetings, req.files && req.files.meetingPhotos, req.body.meetingPhotoIndexes);
   }
 
   await activity.save();

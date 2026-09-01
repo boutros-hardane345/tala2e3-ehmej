@@ -9,6 +9,15 @@
   var BASE = API_BASE_URL + '/api';
   var committeeRoles = ['رئيس', 'نائب الرئيس', 'أمين السر', 'أمين الصندوق', 'وكيل التنشئة', 'وكيل الرسالة', 'وكيل الإعلام', 'وكيل النشاطات', 'مستشار'];
 
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function api(path, opts) {
     var headers = {};
     var token = localStorage.getItem('tala2e3_token');
@@ -26,7 +35,25 @@
       }
     }
     options.headers = headers;
-    return fetch(BASE + path, options).then(function (r) { return r.json(); });
+    return fetch(BASE + path, options).then(function (r) {
+      return r.text().then(function (text) {
+        var data = {};
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            data = { error: text };
+          }
+        }
+        if (!r.ok) {
+          if (r.status === 401) {
+            localStorage.removeItem('tala2e3_token');
+          }
+          throw new Error(data.error || 'تعذر إتمام الطلب.');
+        }
+        return data;
+      });
+    });
   }
 
   function showMsg(text) {
@@ -66,14 +93,14 @@
         var typeClass = isPast ? 'past_activity' : 'upcoming';
         card.innerHTML =
           '<div class="event-dash-header">' +
-            '<strong>' + e.title + '</strong>' +
+            '<strong>' + escapeHtml(e.title) + '</strong>' +
             '<span class="event-type-tag ' + typeClass + '">' + typeLabel + '</span>' +
           '</div>' +
           '<div class="event-dash-meta">' +
-            (e.date ? '<span>📅 ' + e.date + '</span>' : '') +
-            (e.time ? '<span>⏰ ' + e.time + '</span>' : '') +
+            (e.date ? '<span>📅 ' + escapeHtml(e.date) + '</span>' : '') +
+            (e.time ? '<span>⏰ ' + escapeHtml(e.time) + '</span>' : '') +
           '</div>' +
-          (e.description ? '<p class="event-dash-desc">' + e.description + '</p>' : '') +
+          (e.description ? '<p class="event-dash-desc">' + escapeHtml(e.description) + '</p>' : '') +
           '<div class="event-dash-actions">' +
             '<button class="dash-btn secondary ev-edit" data-id="' + e._id + '">✏️ تعديل</button>' +
             '<button class="dash-btn danger ev-del" data-id="' + e._id + '">🗑️ حذف</button>' +
@@ -92,7 +119,7 @@
   }
 
   function fillEventForm(e) {
-    editEventId = e.id;
+    editEventId = e._id || e.id || null;
     document.getElementById('eventTitle').value = e.title || '';
     document.getElementById('eventDate').value = e.date || '';
     document.getElementById('eventTime').value = e.time || '';
@@ -136,8 +163,8 @@
       resetEventForm();
       loadEvents();
       showMsg('✅ تم حفظ اللقاء بنجاح');
-    }).catch(function () {
-      alert('فشل الحفظ.');
+    }).catch(function (err) {
+      alert(err.message || 'فشل الحفظ.');
     });
   }
 
@@ -147,6 +174,8 @@
       if (editEventId === id) resetEventForm();
       loadEvents();
       showMsg('✅ تم حذف اللقاء');
+    }).catch(function (err) {
+      alert(err.message || 'فشل الحذف.');
     });
   }
 
@@ -170,12 +199,12 @@
           var card = document.createElement('div');
           card.className = 'committee-card';
           card.innerHTML =
-            '<div class="c-name">' + m.fullName + '</div>' +
-            '<div class="c-role">👑 ' + m.role + '</div>' +
+            '<div class="c-name">' + escapeHtml(m.fullName) + '</div>' +
+            '<div class="c-role">👑 ' + escapeHtml(m.role) + '</div>' +
             '<div class="c-info">' +
               (m.age ? 'العمر: ' + toArabicNum(m.age) + ' سنة' : '') +
-              (m.bloodType ? ' | فصيلة: ' + m.bloodType : '') +
-              (m.promise ? ' | مكرّس: ' + m.promise : '') +
+              (m.bloodType ? ' | فصيلة: ' + escapeHtml(m.bloodType) : '') +
+              (m.promise ? ' | مكرّس: ' + escapeHtml(m.promise) : '') +
             '</div>' +
             '<div class="c-actions">' +
               '<button class="dash-btn secondary com-edit" data-id="' + m._id + '">✏️ تغيير الدور</button>' +
@@ -227,9 +256,16 @@
     var newRole = prompt('أدخل الدور الجديد للعضو "' + member.fullName + '":\n' +
       committeeRoles.join(', '), member.role);
     if (newRole && newRole.trim()) {
-      api('/members/' + id, { method: 'PUT', body: { role: newRole.trim() } }).then(function () {
+      newRole = newRole.trim();
+      if (committeeRoles.indexOf(newRole) === -1) {
+        alert('الرجاء اختيار دور صحيح من أدوار العمدة فقط.');
+        return;
+      }
+      api('/members/' + id, { method: 'PUT', body: { role: newRole } }).then(function () {
         loadCommittee();
         showMsg('✅ تم تحديث دور ' + member.fullName);
+      }).catch(function (err) {
+        alert(err.message || 'فشل تحديث الدور.');
       });
     }
   }
@@ -250,6 +286,8 @@
     api('/members/' + id, { method: 'PUT', body: { role: 'عضو' } }).then(function () {
       loadCommittee();
       showMsg('✅ تم إزالة ' + member.fullName + ' من العمدة');
+    }).catch(function (err) {
+      alert(err.message || 'فشل إزالة العضو من العمدة.');
     });
   }
 
@@ -262,6 +300,8 @@
     api('/members/' + memberId, { method: 'PUT', body: { role: newRole } }).then(function () {
       loadCommittee();
       showMsg('✅ تم تعيين العضو في العمدة بنجاح');
+    }).catch(function (err) {
+      alert(err.message || 'فشل تعيين العضو.');
     });
   }
 
@@ -289,13 +329,13 @@
         var photoUrl = m.photo || '';
         tr.innerHTML =
           '<td>' + toArabicNum(i + 1) + '</td>' +
-          '<td><strong>' + m.fullName + '</strong></td>' +
-          '<td>' + (m.role || 'عضو') + '</td>' +
+          '<td><strong>' + escapeHtml(m.fullName) + '</strong></td>' +
+          '<td>' + escapeHtml(m.role || 'عضو') + '</td>' +
           '<td>' + toArabicNum(m.age) + '</td>' +
-          '<td>' + (m.bloodType || '—') + '</td>' +
-          '<td><span class="' + (m.promise === 'نعم' ? 'badge-yes' : 'badge-no') + '">' + (m.promise || '—') + '</span></td>' +
-          '<td>' + (m.commitment || '—') + '</td>' +
-            '<td>' + (photoUrl ? '<img src="' + photoUrl + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-pale);">' : '—') + '</td>' +
+          '<td>' + escapeHtml(m.bloodType || '—') + '</td>' +
+          '<td><span class="' + (m.promise === 'نعم' ? 'badge-yes' : 'badge-no') + '">' + escapeHtml(m.promise || '—') + '</span></td>' +
+          '<td>' + escapeHtml(m.commitment || '—') + '</td>' +
+            '<td>' + (photoUrl ? '<img src="' + escapeHtml(photoUrl) + '" alt="' + escapeHtml(m.fullName) + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-pale);">' : '—') + '</td>' +
           '<td style="text-align:center;">' +
             '<button class="dash-btn secondary mem-edit" data-id="' + m._id + '" style="font-size:0.75rem;padding:0.2rem 0.6rem;">✏️</button> ' +
             '<button class="dash-btn danger mem-del" data-id="' + m._id + '" style="font-size:0.75rem;padding:0.2rem 0.6rem;">🗑️</button>' +
@@ -314,8 +354,8 @@
     api('/members/upload-photo', { method: 'POST', body: formData, formData: true }).then(function (res) {
       if (res.url) cb(res.url);
       else alert('فشل رفع الصورة.');
-    }).catch(function () {
-      alert('تعذر رفع الصورة.');
+    }).catch(function (err) {
+      alert(err.message || 'تعذر رفع الصورة.');
     });
   }
 
@@ -418,8 +458,8 @@
         resetMemberForm();
         loadMembersTable();
         showMsg('✅ تم حفظ العضو بنجاح');
-      }).catch(function () {
-        alert('فشل الحفظ.');
+      }).catch(function (err) {
+        alert(err.message || 'فشل الحفظ.');
       });
     }
 
@@ -442,6 +482,8 @@
       if (editMemberId === id) resetMemberForm();
       loadMembersTable();
       showMsg('✅ تم حذف العضو');
+    }).catch(function (err) {
+      alert(err.message || 'فشل الحذف.');
     });
   }
 
@@ -457,31 +499,13 @@
     div.className = 'inline-flex';
     div.style.cssText = 'gap:0.5rem;margin-bottom:0.5rem;';
     div.innerHTML =
-      '<input type="text" class="meeting-title" value="' + (title || '') + '" placeholder="عنوان اللقاء" style="flex:1;padding:0.5rem;border-radius:8px;border:1px solid var(--gray-300);font-family:\'Cairo\',sans-serif;" />' +
+      '<input type="text" class="meeting-title" value="' + escapeHtml(title || '') + '" placeholder="عنوان اللقاء" style="flex:1;padding:0.5rem;border-radius:8px;border:1px solid var(--gray-300);font-family:\'Cairo\',sans-serif;" />' +
       '<input type="file" class="meeting-photo" accept="image/*" style="font-size:0.8rem;" />' +
-      (photoUrl ? '<input type="hidden" class="meeting-photo-url" value="' + photoUrl + '" />' : '') +
+      '<input type="hidden" class="meeting-photo-url" value="' + escapeHtml(photoUrl || '') + '" />' +
       (photoUrl ? '<span style="font-size:0.75rem;color:var(--text-light);">✅ صورة موجودة</span>' : '') +
-      '<button class="dash-btn danger remove-meeting" style="padding:0.3rem 0.7rem;">✕</button>';
+      '<button type="button" class="dash-btn danger remove-meeting" style="padding:0.3rem 0.7rem;">✕</button>';
     div.querySelector('.remove-meeting').addEventListener('click', function () { div.remove(); });
     container.appendChild(div);
-  }
-
-  function collectMeetings() {
-    var rows = document.querySelectorAll('#meetingsContainer > div');
-    var meetings = [];
-    rows.forEach(function (row) {
-      var titleInput = row.querySelector('.meeting-title');
-      var fileInput = row.querySelector('.meeting-photo');
-      var photoUrlInput = row.querySelector('.meeting-photo-url');
-      if (titleInput && titleInput.value.trim()) {
-        var meeting = { title: titleInput.value.trim(), photo: '', file: fileInput ? fileInput.files[0] : null };
-        if (photoUrlInput && photoUrlInput.value) {
-          meeting.photo = photoUrlInput.value;
-        }
-        meetings.push(meeting);
-      }
-    });
-    return meetings;
   }
 
   function loadMonthlyList() {
@@ -499,13 +523,13 @@
         if (a.meetings && a.meetings.length > 0) {
           meetingsHtml = '<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--text-mid);">';
           a.meetings.forEach(function (m) {
-            meetingsHtml += '<div>' + (m.photo ? '🖼️ ' : '• ') + m.title + '</div>';
+            meetingsHtml += '<div>' + (m.photo ? '🖼️ ' : '• ') + escapeHtml(m.title) + '</div>';
           });
           meetingsHtml += '</div>';
         }
         card.innerHTML =
           '<div class="event-dash-header">' +
-            '<strong>' + (monthNamesMap[a.month] || a.month) + ' ' + toArabicNum(a.year) + '</strong>' +
+            '<strong>' + escapeHtml(monthNamesMap[a.month] || a.month) + ' ' + toArabicNum(a.year) + '</strong>' +
             (a.scheduleImage ? '<span style="font-size:0.75rem;color:var(--text-light);">✅ صورة جدول</span>' : '') +
           '</div>' +
           meetingsHtml +
@@ -535,7 +559,8 @@
       '<div class="inline-flex" style="gap:0.5rem;margin-bottom:0.5rem;">' +
         '<input type="text" class="meeting-title" placeholder="عنوان اللقاء" style="flex:1;padding:0.5rem;border-radius:8px;border:1px solid var(--gray-300);font-family:\'Cairo\',sans-serif;" />' +
         '<input type="file" class="meeting-photo" accept="image/*" style="font-size:0.8rem;" />' +
-        '<button class="dash-btn danger remove-meeting" style="padding:0.3rem 0.7rem;">✕</button>' +
+        '<input type="hidden" class="meeting-photo-url" value="" />' +
+        '<button type="button" class="dash-btn danger remove-meeting" style="padding:0.3rem 0.7rem;">✕</button>' +
       '</div>';
     document.querySelectorAll('#meetingsContainer .remove-meeting').forEach(function (b) {
       b.addEventListener('click', function () { b.parentElement.remove(); });
@@ -565,6 +590,8 @@
   function editMonthly(id) {
     api('/monthly-activities/' + id).then(function (a) {
       if (a) fillMonthlyForm(a);
+    }).catch(function (err) {
+      alert(err.message || 'تعذر تحميل النشاط الشهري.');
     });
   }
 
@@ -574,6 +601,8 @@
       if (editMonthlyId === id) resetMonthlyForm();
       loadMonthlyList();
       showMsg('✅ تم حذف النشاط الشهري');
+    }).catch(function (err) {
+      alert(err.message || 'فشل الحذف.');
     });
   }
 
@@ -591,6 +620,7 @@
     if (scheduleFile) formData.append('scheduleImage', scheduleFile);
 
     var meetings = [];
+    var meetingPhotoIndexes = [];
     var rows = document.querySelectorAll('#meetingsContainer > div');
     rows.forEach(function (row) {
       var titleInput = row.querySelector('.meeting-title');
@@ -601,13 +631,18 @@
         if (photoUrlInput && photoUrlInput.value) {
           m.photo = photoUrlInput.value;
         }
+        var meetingIndex = meetings.length;
         meetings.push(m);
         if (fileInput && fileInput.files[0]) {
           formData.append('meetingPhotos', fileInput.files[0]);
+          meetingPhotoIndexes.push(String(meetingIndex));
         }
       }
     });
     formData.append('meetings', JSON.stringify(meetings));
+    meetingPhotoIndexes.forEach(function (idx) {
+      formData.append('meetingPhotoIndexes', idx);
+    });
 
     var opts = { method: 'POST', body: formData, formData: true };
     var url = '/monthly-activities';
@@ -621,8 +656,8 @@
       resetMonthlyForm();
       loadMonthlyList();
       showMsg('✅ تم حفظ النشاط الشهري بنجاح');
-    }).catch(function () {
-      alert('فشل الحفظ.');
+    }).catch(function (err) {
+      alert(err.message || 'فشل الحفظ.');
     });
   }
 
@@ -687,7 +722,10 @@
     document.getElementById('saveMonthlyBtn').addEventListener('click', saveMonthly);
     document.getElementById('cancelMonthlyBtn').addEventListener('click', resetMonthlyForm);
     document.getElementById('refreshMonthly').addEventListener('click', function () { loadMonthlyList(); resetMonthlyForm(); });
-    document.getElementById('addMeetingBtn').addEventListener('click', function () { addMeetingRow('', ''); });
+    document.getElementById('addMeetingBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      addMeetingRow('', '');
+    });
   }
 
   document.addEventListener('DOMContentLoaded', init);
